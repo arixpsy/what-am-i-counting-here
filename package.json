@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@prisma/client": "4.10.1"
+		"@prisma/client": "4.10.1",
+		"crypto": "^1.0.1"
 	}
 }
