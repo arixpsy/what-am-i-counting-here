@@ -7,7 +7,7 @@ const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize';
 
 export const GET: RequestHandler = ({ cookies }) => {
 	const oauthState = randomBytes(16).toString('base64');
-  
+  const encodedOauthState = encodeURIComponent(oauthState)
 	cookies.set('oauth_state', oauthState, {
 		httpOnly: true,
 		secure: true,
@@ -16,7 +16,7 @@ export const GET: RequestHandler = ({ cookies }) => {
 		path: '/'
 	});
 
-	const destination = `${GITHUB_OAUTH_URL}?client_id=${GITHUB_OAUTH_CLIENT_ID}&state=${oauthState}`;
+	const destination = `${GITHUB_OAUTH_URL}?client_id=${GITHUB_OAUTH_CLIENT_ID}&state=${encodedOauthState}`;
 
   throw redirect(302 ,destination);
 };
