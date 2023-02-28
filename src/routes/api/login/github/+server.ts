@@ -1,22 +1,30 @@
-import { GITHUB_OAUTH_CLIENT_ID } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
-import { randomBytes } from 'crypto';
-import type { RequestHandler } from './$types';
+import { GITHUB_OAUTH_CLIENT_ID } from '$env/static/private'
+import { CookieKey } from '@/utils/cookies'
+import { redirect } from '@sveltejs/kit'
+import { randomBytes } from 'crypto'
+import type { RequestHandler } from './$types'
 
-const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize';
+const GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 
+// [GET]: api/login/github
+// Generates a oauth state parameter and stores it as a cookie for 10 minutes.
+// Redirect users to github's oauth authorize endpoint with the client id and state in URLSearchParams.
 export const GET: RequestHandler = ({ cookies }) => {
-	const oauthState = randomBytes(16).toString('base64');
-  const encodedOauthState = encodeURIComponent(oauthState)
-	cookies.set('oauth_state', oauthState, {
+	const oauthState = randomBytes(16).toString('base64')
+
+	cookies.set(CookieKey.GITHUB_OAUTH_STATE, oauthState, {
 		httpOnly: true,
 		secure: true,
 		sameSite: 'strict',
 		maxAge: 600,
 		path: '/'
-	});
+	})
 
-	const destination = `${GITHUB_OAUTH_URL}?client_id=${GITHUB_OAUTH_CLIENT_ID}&state=${encodedOauthState}`;
+	const authSearchParams = new URLSearchParams()
+	authSearchParams.append('client_id', GITHUB_OAUTH_CLIENT_ID)
+	authSearchParams.append('state', oauthState)
 
-  throw redirect(302 ,destination);
-};
+	const destination = `${GITHUB_AUTHORIZE_URL}?${authSearchParams.toString()}`
+
+	throw redirect(302, destination)
+}
