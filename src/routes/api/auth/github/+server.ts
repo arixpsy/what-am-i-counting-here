@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types'
 import { GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET } from '$env/static/private'
-import { CookieKey } from '@/utils/cookies'
+import { CookieKey } from '@/@types/commons/cookies'
 import { redirect } from '@sveltejs/kit'
 import { Routes } from '@/utils/routes'
 

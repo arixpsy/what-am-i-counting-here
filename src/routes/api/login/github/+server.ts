@@ -1,5 +1,5 @@
 import { GITHUB_OAUTH_CLIENT_ID } from '$env/static/private'
-import { CookieKey } from '@/utils/cookies'
+import { CookieKey } from '@/@types/commons/cookies'
 import { redirect } from '@sveltejs/kit'
 import { randomBytes } from 'crypto'
 import type { RequestHandler } from './$types'
