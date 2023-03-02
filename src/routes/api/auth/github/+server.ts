@@ -1,8 +1,14 @@
-import type { RequestHandler } from './$types'
-import { GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET } from '$env/static/private'
-import { CookieKey } from '@/@types/commons/cookies'
 import { redirect } from '@sveltejs/kit'
+import { ExternalPlatform, type User } from '@prisma/client'
+import { DateTime } from 'luxon'
+import jwt from 'jsonwebtoken'
+import { GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET, JWT_SECRET } from '$env/static/private'
+import type { RequestHandler } from './$types'
+import { CookieKey, WAICH_TOKEN_LIFESPAN } from '@/@types/commons/cookies'
 import { Routes } from '@/utils/routes'
+import UsersDao from '@/dao/users'
+import response from '@/utils/response'
+import type { GithubUserDetails } from '@/@types/api/github'
 
 const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/access_token'
 const GITHUB_API_URL = 'https://api.github.com/user'
@@ -18,19 +24,15 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const storedState = cookies.get(CookieKey.GITHUB_OAUTH_STATE)
 
 	if (!githubCode) {
-		return new Response('github code not found', {
-			status: 400
-		})
+		return response.badRequest('github code not found')
 	}
 
 	if (oauthState !== storedState) {
-		return new Response('invalid state parameter', {
-			status: 400
-		})
+		return response.badRequest('invalid state parameter')
 	}
 
 	cookies.delete(CookieKey.GITHUB_OAUTH_STATE, {
-		path: '/'
+		path: '/',
 	})
 
 	const oAuthSearchParams = new URLSearchParams()
@@ -38,30 +40,82 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	oAuthSearchParams.append('client_secret', GITHUB_OAUTH_CLIENT_SECRET)
 	oAuthSearchParams.append('code', githubCode)
 
-	let user = undefined
+	let githubUser: GithubUserDetails | undefined = undefined
 
 	try {
 		const githubAuthRes = await fetch(`${GITHUB_OAUTH_URL}?${oAuthSearchParams.toString()}`, {
 			method: 'POST',
 			headers: {
-				Accept: 'application/json'
-			}
+				Accept: 'application/json',
+			},
 		})
 
 		const { access_token } = await githubAuthRes.json()
 		const userResponse = await fetch(GITHUB_API_URL, {
 			headers: {
-				Authorization: `Bearer ${access_token}`
-			}
+				Authorization: `Bearer ${access_token}`,
+			},
 		})
-		user = await userResponse.json()
+		githubUser = (await userResponse.json()) as GithubUserDetails
 	} catch (err) {
-		return new Response('unable to connect to github', { status: 500 })
+		return response.internalServerError('unable to connect to github')
 	}
 
-	// TODO: create/save user to db
-	// TODO: create JWT token for user and set cookie
-	console.debug(user)
+	let user = undefined
+
+	try {
+		user = await UsersDao.findByExternalPlatformId(
+			ExternalPlatform.Github,
+			githubUser.id.toString()
+		)
+	} catch (err) {
+		return response.internalServerError('unable to login')
+	}
+
+	if (!user) {
+		user = await UsersDao.createUser({
+			avatarUrl: githubUser.avatar_url,
+			displayName: githubUser.name,
+			externalPlatform: ExternalPlatform.Github,
+			externalPlatformId: githubUser.id.toString(),
+		})
+	}
+
+	const updatedUserFields: Partial<User> = {}
+
+	if (user.avatarUrl !== githubUser.avatar_url) {
+		updatedUserFields.avatarUrl = githubUser.avatar_url
+	}
+
+	if (user.displayName !== githubUser.name) {
+		updatedUserFields.displayName = githubUser.name
+	}
+
+	const newJwt = jwt.sign(
+		{ avatarUrl: githubUser.avatar_url, displayName: githubUser.name },
+		JWT_SECRET
+	)
+
+	updatedUserFields.clientToken = newJwt
+	updatedUserFields.tokenExpiration = DateTime.now()
+		.plus({ millisecond: WAICH_TOKEN_LIFESPAN })
+		.toJSDate()
+
+	try {
+		user = await UsersDao.updateUser(user.id, updatedUserFields)
+	} catch (err) {
+		return response.internalServerError('unable to login')
+	}
+
+	console.table(user)
+
+	cookies.set(CookieKey.WAICH_TOKEN, newJwt, {
+		sameSite: 'strict',
+		path: '/',
+		httpOnly: true,
+		secure: true,
+		maxAge: WAICH_TOKEN_LIFESPAN,
+	})
 
 	throw redirect(302, Routes.HOME)
 }
