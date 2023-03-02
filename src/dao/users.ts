@@ -4,29 +4,37 @@ const prisma = new PrismaClient()
 
 const createUser = (data: NewUser) =>
 	prisma.user.create({
-		data
+		data,
+	})
+
+const findById = (userId: number) =>
+	prisma.user.findUnique({
+		where: {
+			id: userId,
+		},
 	})
 
 const findByExternalPlatformId = (externalPlatform: ExternalPlatform, externalPlatformId: string) =>
 	prisma.user.findFirst({
 		where: {
 			externalPlatform,
-			externalPlatformId
-		}
+			externalPlatformId,
+		},
 	})
 
 const updateUser = (userId: number, updatedFields: Partial<User>) =>
 	prisma.user.update({
 		data: updatedFields,
 		where: {
-			id: userId
-		}
+			id: userId,
+		},
 	})
 
 const UsersDao = {
 	createUser,
+	findById,
 	findByExternalPlatformId,
-	updateUser
+	updateUser,
 }
 
 export default UsersDao
