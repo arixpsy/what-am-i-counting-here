@@ -1,6 +1,7 @@
 export const Routes = {
 	// API
 	GITHUB_AUTHORIZATION: '/api/login/github',
+	LOGOUT: '/api/logout',
 
 	// PAGES
 	LOGIN: '/',
