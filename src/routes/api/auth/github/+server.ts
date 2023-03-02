@@ -9,6 +9,7 @@ import { Routes } from '@/utils/routes'
 import UsersDao from '@/dao/users'
 import response from '@/utils/response'
 import type { GithubUserDetails } from '@/@types/api/github'
+import type { VerifiedJWT } from '@/@types/api/users'
 
 const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/access_token'
 const GITHUB_API_URL = 'https://api.github.com/user'
@@ -91,10 +92,13 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		updatedUserFields.displayName = githubUser.name
 	}
 
-	const newJwt = jwt.sign(
-		{ avatarUrl: githubUser.avatar_url, displayName: githubUser.name },
-		JWT_SECRET
-	)
+	const jwtData: VerifiedJWT = {
+		id: user.id,
+		avatarUrl: githubUser.avatar_url,
+		displayName: githubUser.name,
+	}
+
+	const newJwt = jwt.sign(jwtData, JWT_SECRET)
 
 	updatedUserFields.clientToken = newJwt
 	updatedUserFields.tokenExpiration = DateTime.now()
@@ -107,11 +111,9 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return response.internalServerError('unable to login')
 	}
 
-	console.table(user)
-
 	cookies.set(CookieKey.WAICH_TOKEN, newJwt, {
-		sameSite: 'strict',
 		path: '/',
+		sameSite: 'strict',
 		httpOnly: true,
 		secure: true,
 		maxAge: WAICH_TOKEN_LIFESPAN,
