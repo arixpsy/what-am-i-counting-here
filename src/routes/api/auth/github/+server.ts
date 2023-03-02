@@ -115,7 +115,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	cookies.set(CookieKey.WAICH_TOKEN, newJwt, {
 		path: '/',
-		sameSite: 'strict',
+		sameSite: 'lax',
 		httpOnly: true,
 		secure: true,
 		maxAge: WAICH_TOKEN_LIFESPAN,
