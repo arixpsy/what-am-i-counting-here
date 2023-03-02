@@ -24,6 +24,8 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const oauthState = url.searchParams.get('state')
 	const storedState = cookies.get(CookieKey.GITHUB_OAUTH_STATE)
 
+	console.debug(storedState)
+
 	if (!githubCode) {
 		return response.badRequest('github code not found')
 	}
