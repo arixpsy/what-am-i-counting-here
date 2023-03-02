@@ -16,7 +16,7 @@
 {:else}
 	<button
 		on:click
-		class="font-bold text-sm text-center px-4 py-3 rounded-lg transition-colors text-gray-400 bg-gray-200 hover:bg-gray-300 hover:text-black"
+		class="font-bold text-sm text-center px-4 py-3 rounded-lg transition-colors text-gray-400 bg-gray-200 hover:bg-gray-300 hover:text-gray-600"
 		class:w-full={block}
 	>
 		<slot />
