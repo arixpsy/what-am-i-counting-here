@@ -5,8 +5,4 @@ export type NewUser = Pick<
 	'externalPlatform' | 'externalPlatformId' | 'avatarUrl' | 'displayName'
 >
 
-export type VerifiedJWT = {
-	id: number
-	avatarUrl: string
-	displayName: string
-}
+export type VerifiedJWT = Pick<User, 'id' | 'avatarUrl' | 'displayName'>
