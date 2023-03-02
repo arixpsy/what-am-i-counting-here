@@ -15,7 +15,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
 	cookies.set(CookieKey.GITHUB_OAUTH_STATE, oauthState, {
 		httpOnly: true,
 		secure: true,
-		sameSite: 'strict',
+		sameSite: 'lax',
 		maxAge: 600,
 		path: '/'
 	})
