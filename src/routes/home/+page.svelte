@@ -2,6 +2,11 @@
 	import { page } from '$app/stores'
 	import { Button } from '@/components/commons/'
 	import { Routes } from '@/utils/routes'
+	import { onMount } from 'svelte'
+
+	onMount(async () => {
+		const counters = await fetch('/api/counters')
+	})
 </script>
 
 <div class="container mx-auto min-h-screen pt-9">

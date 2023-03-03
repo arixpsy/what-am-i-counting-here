@@ -17,7 +17,7 @@
 		type CounterColor,
 		CounterFormSchema,
 		type NewCounterRequest,
-	} from '@/@types/api/counters'
+	} from '@/@types/client/counters'
 	import { ResetType } from '@prisma/client'
 	import { useForm } from '@/hooks/useForm'
 
