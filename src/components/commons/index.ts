@@ -1,5 +1,6 @@
 import Button from '@/components/commons/Button/Button.svelte'
 import ColorRadioInput from '@/components/commons/ColorRadioInput/ColorRadioInput.svelte'
+import IncrementInput from '@/components/commons/IncrementInput/IncrementInput.svelte'
 import Modal from '@/components/commons/Modal/Modal.svelte'
 import NumberInput from '@/components/commons/NumberInput/NumberInput.svelte'
 import RadioInput from '@/components/commons/RadioInput/RadioInput.svelte'
@@ -27,4 +28,14 @@ const Icon = {
 	Home,
 }
 
-export { Button, ColorRadioInput, Icon, Modal, NumberInput, RadioInput, SwitchInput, TextInput }
+export {
+	Button,
+	ColorRadioInput,
+	Icon,
+	IncrementInput,
+	Modal,
+	NumberInput,
+	RadioInput,
+	SwitchInput,
+	TextInput,
+}
