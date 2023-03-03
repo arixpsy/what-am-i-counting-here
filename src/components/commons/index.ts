@@ -1,5 +1,6 @@
 import Button from '@/components/commons/Button/Button.svelte'
 import ColorRadioInput from '@/components/commons/ColorRadioInput/ColorRadioInput.svelte'
+import FormItem from '@/components/commons/FormItem/FormItem.svelte'
 import IncrementInput from '@/components/commons/IncrementInput/IncrementInput.svelte'
 import Modal from '@/components/commons/Modal/Modal.svelte'
 import NumberInput from '@/components/commons/NumberInput/NumberInput.svelte'
@@ -31,6 +32,7 @@ const Icon = {
 export {
 	Button,
 	ColorRadioInput,
+  FormItem,
 	Icon,
 	IncrementInput,
 	Modal,

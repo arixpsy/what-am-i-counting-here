@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import KeyCode from '@/@types/commons/keycode'
-  
+
 	export let isToggle: boolean = false
 
 	const dispatch = createEventDispatcher()

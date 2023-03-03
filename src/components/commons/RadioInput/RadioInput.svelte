@@ -55,7 +55,7 @@
 	.onSelected {
 		animation: scale 300ms ease-out;
 	}
-	
+
 	label {
 		-webkit-tap-highlight-color: transparent;
 	}

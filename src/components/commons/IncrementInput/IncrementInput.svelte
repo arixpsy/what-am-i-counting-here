@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte'
 	import { slide, fade } from 'svelte/transition'
 	import { Icon } from '@/components/commons'
-  import KeyCode from '@/@types/commons/keycode';
+	import KeyCode from '@/@types/commons/keycode'
 
 	export let value: number
 	export let isCustom: boolean
