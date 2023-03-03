@@ -18,3 +18,5 @@
 		<Button>Logout</Button>
 	</a>
 </div>
+
+<!-- MODALS -->
