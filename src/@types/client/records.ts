@@ -22,6 +22,6 @@ export type CustomIncrementEvent = {
   latestValue: number;
 };
 
-export type NewRecordRequest = NewRecord & {
+export type NewRecordRequest = Omit<NewRecord, 'userId'> & {
   labels: Array<string>
 }
