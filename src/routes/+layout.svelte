@@ -5,11 +5,11 @@
 
 	const client = new QueryClient({
 		defaultOptions: {
-			queries:  {
+			queries: {
 				enabled: browser,
-				refetchOnWindowFocus: false
-			}
-		}
+				refetchOnWindowFocus: false,
+			},
+		},
 	})
 </script>
 

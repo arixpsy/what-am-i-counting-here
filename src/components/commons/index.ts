@@ -34,7 +34,7 @@ const Icon = {
 export {
 	Button,
 	ColorRadioInput,
-  FormItem,
+	FormItem,
 	Icon,
 	IncrementInput,
 	Modal,

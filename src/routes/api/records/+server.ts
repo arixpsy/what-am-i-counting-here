@@ -22,18 +22,18 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 		return response.badRequest('unable to parse body')
 	}
 
-  let record: Record;
-  try {
-    // TODO: use transaction and add labels
-    record = await RecordsDao.createRecord({
-      userId: user.id,
-      counterId: newRecordRequest.counterId,
-      increment: newRecordRequest.increment,
-      description: newRecordRequest.description,
-    })
-  } catch {
-    return response.internalServerError('unable to create new record')
-  }
+	let record: Record
+	try {
+		// TODO: use transaction and add labels
+		record = await RecordsDao.createRecord({
+			userId: user.id,
+			counterId: newRecordRequest.counterId,
+			increment: newRecordRequest.increment,
+			description: newRecordRequest.description,
+		})
+	} catch {
+		return response.internalServerError('unable to create new record')
+	}
 
 	return response.ok(record)
 }

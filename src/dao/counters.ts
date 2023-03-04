@@ -7,11 +7,12 @@ const createCounter = (data: NewCounter) =>
 		data,
 	})
 
-const deleteCounter = (id: number) => prisma.counter.delete({
-	where: {
-		id,
-	}
-})
+const deleteCounter = (id: number) =>
+	prisma.counter.delete({
+		where: {
+			id,
+		},
+	})
 
 const findAllByUserId = (userId: number) =>
 	prisma.counter.findMany({

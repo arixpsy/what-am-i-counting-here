@@ -18,7 +18,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 		secure: true,
 		sameSite: 'lax',
 		maxAge: 600,
-		path: '/'
+		path: '/',
 	})
 
 	if (timezone) {
@@ -27,7 +27,7 @@ export const GET: RequestHandler = async ({ cookies, url }) => {
 			secure: true,
 			sameSite: 'lax',
 			maxAge: 600,
-			path: '/'
+			path: '/',
 		})
 	}
 

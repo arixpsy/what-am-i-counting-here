@@ -1,6 +1,6 @@
 export const ButtonColor = {
 	PRIMARY: 'primary',
-	DEFAULT: 'default'
-} as const;
+	DEFAULT: 'default',
+} as const
 
-export type IButtonColor = typeof ButtonColor[keyof typeof ButtonColor]
+export type IButtonColor = (typeof ButtonColor)[keyof typeof ButtonColor]

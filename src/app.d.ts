@@ -1,5 +1,5 @@
 // See https://kit.svelte.dev/docs/types#app
-import type { User } from "@prisma/client";
+import type { User } from '@prisma/client'
 
 // for information about these interfaces
 declare global {
@@ -13,4 +13,4 @@ declare global {
 	}
 }
 
-export {};
+export {}

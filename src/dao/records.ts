@@ -2,11 +2,10 @@ import { PrismaClient } from '@prisma/client'
 import type { NewRecord } from '@/@types/api/records'
 const prisma = new PrismaClient()
 
-const createRecord = (data: NewRecord) => 
+const createRecord = (data: NewRecord) =>
 	prisma.record.create({
-		data
+		data,
 	})
-
 
 const findAllByCounterId = (counterId: number, startRange: Date, endRange: Date) =>
 	prisma.record.findMany({

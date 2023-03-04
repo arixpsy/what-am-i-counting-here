@@ -36,13 +36,13 @@ const redirectIfAuthenticated: Handle = async ({ event, resolve }) => {
 }
 
 const redirectIfNotAuthenticated: Handle = async ({ event, resolve }) => {
-  const isAuthenticated = !!event.locals.user
-  const route = event.route.id as typeof AUTH_PAGE_ROUTES[number]
-  const isAuthPageRoute = AUTH_PAGE_ROUTES.includes(route)
+	const isAuthenticated = !!event.locals.user
+	const route = event.route.id as (typeof AUTH_PAGE_ROUTES)[number]
+	const isAuthPageRoute = AUTH_PAGE_ROUTES.includes(route)
 
-  if (!isAuthenticated && isAuthPageRoute) {
-    throw redirect(302, Routes.LOGIN)
-  }
+	if (!isAuthenticated && isAuthPageRoute) {
+		throw redirect(302, Routes.LOGIN)
+	}
 	return resolve(event)
 }
 

@@ -42,6 +42,6 @@
 		icon={isMenuOpen ? Icon.Cross : Icon.Burger}
 		ariaLabel="navigation menu"
 		on:click={() => (isMenuOpen = !isMenuOpen)}
-    isClose={isMenuOpen}
+		isClose={isMenuOpen}
 	/>
 </div>
