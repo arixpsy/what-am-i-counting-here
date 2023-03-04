@@ -18,3 +18,11 @@ export const createCounter = async (body: NewCounterRequest) => {
   const data = (await response.json()) as Counter
   return data
 }
+
+export const deleteCounter = async (counterId: number) => {
+  const response = await fetch(`${ROUTE}/${counterId}`, {
+    method: 'DELETE',
+  })
+  const data = (await response.json()) as number
+  return data
+}
