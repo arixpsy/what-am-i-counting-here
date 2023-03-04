@@ -30,6 +30,7 @@ model User {
   displayName        String
   clientToken        String           @default("")
   tokenExpiration    DateTime         @default(now())
+  timezone           String           @default("Asia/Singapore")
   counter            Counter[]
   records            Record[]
   createdAt          DateTime         @default(now())
