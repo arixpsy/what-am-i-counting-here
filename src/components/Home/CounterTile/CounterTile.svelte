@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import { scale } from 'svelte/transition'
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
 	import type { Counter } from '@prisma/client'
 	import { goto } from '$app/navigation'
 	import KeyCode from '@/@types/commons/keycode'
@@ -10,6 +11,8 @@
 	import { longpress } from '@/actions/longpress'
 	import { Routes } from '@/utils/routes'
 	import type { CounterColor } from '@/@types/client/counters'
+	import { callDeleteCounter } from '@/utils/fetch/counters'
+	import { QueryKey } from '@/utils/fetch/queryKeys'
 
 	export let counter: Counter
 	export let currentCount: number
@@ -20,6 +23,10 @@
 	const dispatch = createEventDispatcher<{
 		'custom-increment': CustomIncrementEvent
 	}>()
+	const queryClient = useQueryClient()
+	const deleteCounter = useMutation(callDeleteCounter, {
+		onSuccess: deleteCounterSuccessCB,
+	})
 
 	function handleKeyPress(e: KeyboardEvent) {
 		switch (e.code) {
@@ -47,11 +54,15 @@
 	}
 
 	function handleDeleteCounter() {
-		// TODO: call api
+		$deleteCounter.mutate(counter.id)
 	}
 
 	function handleNavigateToCounter() {
 		goto(`${Routes.COUNTER}/${counter.id}`)
+	}
+
+	function deleteCounterSuccessCB() {
+		queryClient.invalidateQueries({ queryKey: QueryKey.GET_COUNTERS })
 	}
 </script>
 
