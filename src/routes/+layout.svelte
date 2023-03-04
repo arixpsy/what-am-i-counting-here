@@ -1,7 +1,18 @@
 <script>
-  import "../app.css";
+	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query'
+	import '../app.css'
+
+	const client = new QueryClient({
+		defaultOptions: {
+			queries:  {
+				refetchOnWindowFocus: false
+			}
+		}
+	})
 </script>
 
-<main class="min-h-screen bg-white">
-  <slot />
-</main>
+<QueryClientProvider {client}>
+	<main class="min-h-screen bg-white">
+		<slot />
+	</main>
+</QueryClientProvider>
