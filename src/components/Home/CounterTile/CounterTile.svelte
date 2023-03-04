@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte'
 	import { scale } from 'svelte/transition'
 	import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
-	import type { Counter } from '@prisma/client'
+	import type { Counter, Record } from '@prisma/client'
 	import { goto } from '$app/navigation'
 	import KeyCode from '@/@types/commons/keycode'
 	import type { CustomIncrementEvent } from '@/@types/client/records'
@@ -13,6 +13,8 @@
 	import type { CounterColor } from '@/@types/client/counters'
 	import { callDeleteCounter } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
+	import { callCreateRecord } from '@/utils/fetch/records'
+	import type { GetCounterResponse } from '@/@types/api/counters'
 
 	export let counter: Counter
 	export let currentCount: number
@@ -26,6 +28,9 @@
 	const queryClient = useQueryClient()
 	const deleteCounter = useMutation(callDeleteCounter, {
 		onSuccess: deleteCounterSuccessCB,
+	})
+	const createRecord = useMutation(callCreateRecord, {
+		onSuccess: createRecordSuccessCB,
 	})
 
 	function handleKeyPress(e: KeyboardEvent) {
@@ -50,7 +55,12 @@
 	}
 
 	function handleCounterIncrement() {
-		// TODO: call api
+		$createRecord.mutate({
+			counterId: counter.id,
+			description: '',
+			increment: counter.increment,
+			labels: [],
+		})
 	}
 
 	function handleDeleteCounter() {
@@ -63,6 +73,24 @@
 
 	function deleteCounterSuccessCB() {
 		queryClient.invalidateQueries({ queryKey: QueryKey.GET_COUNTERS })
+	}
+
+	function createRecordSuccessCB(res: Record) {
+		queryClient.setQueryData(QueryKey.GET_COUNTERS, (data?: Array<GetCounterResponse>) => {
+			const newCache: Array<GetCounterResponse> = []
+			if (!data) return newCache
+			for (const counter of data) {
+				if (counter.id === res.counterId) {
+					newCache.push({
+						...counter,
+						currentCount: currentCount + res.increment,
+					})
+				} else {
+					newCache.push(counter)
+				}
+			}
+			return newCache
+		})
 	}
 </script>
 
