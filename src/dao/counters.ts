@@ -12,6 +12,11 @@ const findAllByUserId = (userId: number) =>
 		where: {
 			userId,
 		},
+		orderBy: [
+			{
+				id: 'asc',
+			},
+		],
 	})
 
 const findById = (counterId: number) =>
