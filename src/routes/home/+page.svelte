@@ -44,6 +44,13 @@
 			},
 			label: 'view history',
 		},
+		{
+			icon: Icon.Cog,
+			onClick: () => {
+				goto(Routes.OPTIONS)
+			},
+			label: 'view options',
+		},
 	]
 
 	function handleGlobalKeyUp(e: KeyboardEvent) {
@@ -125,10 +132,6 @@
 			{/each}
 		{/if}
 	</div>
-
-	<a href={Routes.LOGOUT}>
-		<Button>Logout</Button>
-	</a>
 </div>
 
 <!-- NAVIGATION MENU -->

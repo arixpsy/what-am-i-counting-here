@@ -14,6 +14,7 @@ import TextInput from '@/components/commons/TextInput/TextInput.svelte'
 import Burger from '@/components/commons/Icons/Burger.svelte'
 import Calendar from '@/components/commons/Icons/Calendar.svelte'
 import ChevronRight from '@/components/commons/Icons/ChevronRight.svelte'
+import Cog from '@/components/commons/Icons/Cog.svelte'
 import Cross from '@/components/commons/Icons/Cross.svelte'
 import FourSquare from '@/components/commons/Icons/FourSquare.svelte'
 import Home from '@/components/commons/Icons/Home.svelte'
@@ -22,13 +23,14 @@ import Plus from '@/components/commons/Icons/Plus.svelte'
 
 const Icon = {
 	Burger,
-	Cross,
-	Plus,
-	Minus,
-	ChevronRight,
 	Calendar,
+	ChevronRight,
+	Cog,
+	Cross,
 	FourSquare,
 	Home,
+	Minus,
+	Plus,
 }
 
 export {
