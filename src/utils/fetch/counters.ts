@@ -4,13 +4,13 @@ import type { Counter } from "@prisma/client"
 
 const ROUTE = '/api/counters'
 
-export const getCounters = async () => {
+export const callGetCounters = async () => {
   const response = await fetch(ROUTE)
   const data = (await response.json()) as Array<GetCounterResponse>
   return data
 }
 
-export const createCounter = async (body: NewCounterRequest) => {
+export const callCreateCounter = async (body: NewCounterRequest) => {
   const response = await fetch(ROUTE, {
     method: 'POST',
     body: JSON.stringify(body)
@@ -19,7 +19,7 @@ export const createCounter = async (body: NewCounterRequest) => {
   return data
 }
 
-export const deleteCounter = async (counterId: number) => {
+export const callDeleteCounter = async (counterId: number) => {
   const response = await fetch(`${ROUTE}/${counterId}`, {
     method: 'DELETE',
   })

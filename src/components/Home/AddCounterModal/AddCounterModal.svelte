@@ -21,7 +21,7 @@
 	} from '@/@types/client/counters'
 	import { ResetType } from '@prisma/client'
 	import { useForm } from '@/hooks/useForm'
-	import { createCounter } from '@/utils/fetch/counters'
+	import { callCreateCounter } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
 
 	export let isVisible: boolean = false
@@ -52,12 +52,12 @@
 				target,
 				color,
 			}
-			$submitCounter.mutate(newCounter)
+			$createCounter.mutate(newCounter)
 		},
 	})
 	const dispatch = createEventDispatcher()
 	const queryClient = useQueryClient()
-	const submitCounter = useMutation(createCounter, {
+	const createCounter = useMutation(callCreateCounter, {
 		onSuccess: submitCounterSuccessCB,
 	})
 
