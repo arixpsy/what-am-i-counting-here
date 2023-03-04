@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { CounterColor } from "@/@types/client/counters";
+import type { NewRecord } from "@/@types/api/records";
 
 const RecordIncrementValue = z
   .number({
@@ -9,7 +10,7 @@ const RecordIncrementValue = z
   .min(1, "Invalid increment");
 
 export const RecordFormSchema = z.object({
-  incrementValue: RecordIncrementValue,
+  increment: RecordIncrementValue,
   labels: z.array(z.string()),
   description: z.string(),
 });
@@ -20,3 +21,7 @@ export type CustomIncrementEvent = {
   counterTitle: string;
   latestValue: number;
 };
+
+export type NewRecordRequest = NewRecord & {
+  labels: Array<string>
+}
