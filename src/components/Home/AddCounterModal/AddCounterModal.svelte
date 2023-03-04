@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher, tick } from 'svelte'
 	import { fade } from 'svelte/transition'
+	import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
 	import type { z } from 'zod'
 	import {
 		Modal,
@@ -20,6 +21,8 @@
 	} from '@/@types/client/counters'
 	import { ResetType } from '@prisma/client'
 	import { useForm } from '@/hooks/useForm'
+	import { createCounter } from '@/utils/fetch/counters'
+	import { QueryKey } from '@/utils/fetch/queryKeys'
 
 	export let isVisible: boolean = false
 
@@ -49,13 +52,14 @@
 				target,
 				color,
 			}
-			console.log(newCounter)
-			// TODO: Call API
-			dispatch('modal-close')
-			handleResetForm()
+			$submitCounter.mutate(newCounter)
 		},
 	})
 	const dispatch = createEventDispatcher()
+	const queryClient = useQueryClient()
+	const submitCounter = useMutation(createCounter, {
+		onSuccess: submitCounterSuccessCB,
+	})
 
 	$: resetTypeValues = Object.entries(ResetType)
 	$: ({ hasTarget } = form)
@@ -92,6 +96,12 @@
 
 	function handleColorRadioSelect(event: CustomEvent<CounterColor>) {
 		form.color = event.detail
+	}
+
+	function submitCounterSuccessCB() {
+		queryClient.invalidateQueries({ queryKey: QueryKey.GET_COUNTERS })
+		dispatch('modal-close')
+		handleResetForm()
 	}
 </script>
 
