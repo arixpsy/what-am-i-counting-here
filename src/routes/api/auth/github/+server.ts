@@ -9,7 +9,7 @@ import { Routes } from '@/utils/routes'
 import UsersDao from '@/dao/users'
 import response from '@/utils/response'
 import type { GithubUserDetails } from '@/@types/api/github'
-import type { VerifiedJWT } from '@/@types/api/users'
+import type { NewUser, VerifiedJWT } from '@/@types/api/users'
 
 const GITHUB_OAUTH_URL = 'https://github.com/login/oauth/access_token'
 const GITHUB_API_URL = 'https://api.github.com/user'
@@ -23,8 +23,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const githubCode = url.searchParams.get('code')
 	const oauthState = url.searchParams.get('state')
 	const storedState = cookies.get(CookieKey.GITHUB_OAUTH_STATE)
-
-	console.debug(storedState)
+	const timezone = cookies.get(CookieKey.AUTH_TIMEZONE)
 
 	if (!githubCode) {
 		return response.badRequest('github code not found')
@@ -35,6 +34,10 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	}
 
 	cookies.delete(CookieKey.GITHUB_OAUTH_STATE, {
+		path: '/',
+	})
+
+	cookies.delete(CookieKey.AUTH_TIMEZONE, {
 		path: '/',
 	})
 
@@ -76,12 +79,18 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	}
 
 	if (!user) {
-		user = await UsersDao.createUser({
+		const newUser: NewUser = {
 			avatarUrl: githubUser.avatar_url,
 			displayName: githubUser.name,
 			externalPlatform: ExternalPlatform.Github,
 			externalPlatformId: githubUser.id.toString(),
-		})
+		}
+
+		if (timezone) {
+			newUser.timezone = timezone
+		}
+
+		user = await UsersDao.createUser(newUser)
 	}
 
 	const updatedUserFields: Partial<User> = {}
