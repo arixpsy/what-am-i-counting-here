@@ -36,7 +36,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 			currentCount: accumulateRecordIncrements(records),
 		})
 	}
-	return response.ok(JSON.stringify(responseBody))
+	return response.ok(responseBody)
 }
 
 // [POST]: api/counters
@@ -64,7 +64,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		return response.internalServerError('unable to create new counter')
 	}
 
-	return response.ok(JSON.stringify(counter))
+	return response.ok(counter)
 }
 
 function getRecordFilterRange(counter: Counter, user: User) {
