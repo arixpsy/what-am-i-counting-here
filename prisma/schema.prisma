@@ -33,6 +33,7 @@ model User {
   timezone           String           @default("Asia/Singapore")
   counter            Counter[]
   records            Record[]
+  labels             Label[]
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 }
@@ -66,6 +67,8 @@ model Record {
 
 model Label {
   id        String   @id
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
   records   Record[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
