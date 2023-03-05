@@ -14,6 +14,7 @@
 	import { callCreateRecord } from '@/utils/fetch/records'
 	import type { GetCounterResponse } from '@/@types/api/counters'
 	import { formatCount } from '@/utils/format'
+	import { updateCounterCacheWithRecord } from '@/utils/queryCache'
 
 	export let counter: Counter
 	export let currentCount: number
@@ -71,19 +72,8 @@
 
 	function createRecordSuccessCB(res: Record) {
 		queryClient.setQueryData(QueryKey.GET_COUNTERS, (data?: Array<GetCounterResponse>) => {
-			const newCache: Array<GetCounterResponse> = []
-			if (!data) return newCache
-			for (const counter of data) {
-				if (counter.id === res.counterId) {
-					newCache.push({
-						...counter,
-						currentCount: currentCount + res.increment,
-					})
-				} else {
-					newCache.push(counter)
-				}
-			}
-			return newCache
+			if (!data) return []
+			return updateCounterCacheWithRecord(data, res)
 		})
 	}
 </script>
