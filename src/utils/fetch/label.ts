@@ -1,5 +1,5 @@
-import type { GetLabelsRequest } from "@/@types/client/labels"
-import type { Label } from "@prisma/client"
+import type { GetLabelsRequest } from '@/@types/client/labels'
+import type { Label } from '@prisma/client'
 
 const ROUTE = '/api/labels'
 

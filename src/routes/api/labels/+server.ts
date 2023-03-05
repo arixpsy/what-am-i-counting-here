@@ -1,7 +1,7 @@
-import type { RequestHandler } from "@sveltejs/kit"
-import type { Label } from "@prisma/client"
-import response from "@/utils/response"
-import LabelsDao from "@/dao/labels"
+import type { RequestHandler } from '@sveltejs/kit'
+import type { Label } from '@prisma/client'
+import response from '@/utils/response'
+import LabelsDao from '@/dao/labels'
 
 // [GET]: api/labels
 // Returns a list of 5 labels previously used for a given user sorted by latest used

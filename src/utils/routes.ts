@@ -13,6 +13,11 @@ export const Routes = {
 
 export type Routes = (typeof Routes)[keyof typeof Routes]
 
-export const AUTH_PAGE_ROUTES = [Routes.HOME, Routes.COUNTER, Routes.HISTORY, Routes.OPTIONS] as const
+export const AUTH_PAGE_ROUTES = [
+	Routes.HOME,
+	Routes.COUNTER,
+	Routes.HISTORY,
+	Routes.OPTIONS,
+] as const
 
 export const PAGE_ROUTES = [Routes.LOGIN, ...AUTH_PAGE_ROUTES] as const

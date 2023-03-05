@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { createEventDispatcher, tick } from 'svelte'
 	import type { z } from 'zod'
-	import { Modal, FormItem, NumberInput, TextInput, LabelPill, CustomLabelInput } from '@/components/commons'
+	import {
+		Modal,
+		FormItem,
+		NumberInput,
+		TextInput,
+		LabelPill,
+		CustomLabelInput,
+	} from '@/components/commons'
 	import { IncrementPreviewTile } from '@/components/Home'
 	import { RecordFormSchema } from '@/@types/client/records'
 	import { useForm } from '@/hooks/useForm'
