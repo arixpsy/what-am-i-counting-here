@@ -17,6 +17,6 @@
 	<p class="my-3 flex flex-wrap items-center justify-center space-x-3 text-3xl font-bold">
 		<span class="line-through">{formatCount(counter?.currentCount || 0)}</span>
 		<Icon.ChevronRight />
-		<span>{formatCount(counter?.currentCount || 0 + increment)}</span>
+		<span>{formatCount((counter?.currentCount || 0) + increment)}</span>
 	</p>
 </div>

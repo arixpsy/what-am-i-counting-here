@@ -2,6 +2,7 @@ import Button from '@/components/commons/Button/Button.svelte'
 import ColorRadioInput from '@/components/commons/ColorRadioInput/ColorRadioInput.svelte'
 import FormItem from '@/components/commons/FormItem/FormItem.svelte'
 import IncrementInput from '@/components/commons/IncrementInput/IncrementInput.svelte'
+import LabelPill from '@/components/commons/LabelPill/LabelPill.svelte'
 import Modal from '@/components/commons/Modal/Modal.svelte'
 import Navigation from '@/components/commons/Navigation/Navigation.svelte'
 import NavigationItem from '@/components/commons/NavigationItem/NavigationItem.svelte'
@@ -39,6 +40,7 @@ export {
 	FormItem,
 	Icon,
 	IncrementInput,
+	LabelPill,
 	Modal,
 	Navigation,
 	NavigationItem,
