@@ -3,9 +3,8 @@
 	import { scale, fade } from 'svelte/transition'
 	import { useQuery } from '@sveltestack/svelte-query'
 	import { goto } from '$app/navigation'
-	import { Button, Icon, Navigation, NavigationItem } from '@/components/commons/'
-	import { AddCounterModal, CounterTile } from '@/components/Home'
-	import type { CustomIncrementEvent } from '@/@types/client/records'
+	import { Icon, Navigation, NavigationItem } from '@/components/commons/'
+	import { AddCounterModal, CounterTile, CustomIncrementModal } from '@/components/Home'
 	import KeyCode from '@/@types/commons/keycode'
 	import { Routes } from '@/utils/routes'
 	import { callGetCounters } from '@/utils/fetch/counters'
@@ -16,7 +15,7 @@
 	let isMenuOpen: boolean = false
 	let isAddModalOpen = false
 	let isCustomIncrementModalOpen = false
-	let customIncrementEvent: CustomIncrementEvent | undefined = undefined
+	let customIncrementEvent: number | undefined = undefined
 
 	const counters = useQuery(QueryKey.GET_COUNTERS, callGetCounters)
 	const navItems = [
@@ -105,6 +104,11 @@
 			customIncrementEvent = undefined
 		}
 	}
+
+	function handleCustomIncrement(e: CustomEvent<number>) {
+		customIncrementEvent = e.detail
+		isCustomIncrementModalOpen = true
+	}
 </script>
 
 <svelte:window on:keyup={handleGlobalKeyUp} bind:scrollY />
@@ -127,7 +131,12 @@
 		{#if $counters.data}
 			{#each $counters.data as counter (counter.id)}
 				<div animate:flip={{ duration: 400 }} in:scale>
-					<CounterTile {counter} currentCount={counter.currentCount} {isSortMode} />
+					<CounterTile
+						{counter}
+						currentCount={counter.currentCount}
+						{isSortMode}
+						on:custom-increment={handleCustomIncrement}
+					/>
 				</div>
 			{/each}
 		{/if}
@@ -154,4 +163,12 @@
 	on:modal-submit={toggleAddModalOpen}
 	on:modal-close={toggleAddModalOpen}
 	on:modal-cancel={toggleAddModalOpen}
+/>
+
+<CustomIncrementModal
+	counterId={customIncrementEvent}
+	isVisible={isCustomIncrementModalOpen}
+	on:modal-submit={toggleCustomIncrementModalOpen}
+	on:modal-close={toggleCustomIncrementModalOpen}
+	on:modal-cancel={toggleCustomIncrementModalOpen}
 />
