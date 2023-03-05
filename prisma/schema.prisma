@@ -65,7 +65,7 @@ model Record {
 }
 
 model Label {
-  id        Int      @id @default(autoincrement())
+  id        String   @id
   records   Record[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
