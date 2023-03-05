@@ -1,4 +1,4 @@
 export const QueryKey = {
 	GET_COUNTERS: ['counters'] as const,
-	LATEST_LABELS: ['labels'] as const,
+	GET_LATEST_LABELS: ['latest-labels'] as const,
 } as const
