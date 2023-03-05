@@ -1,5 +1,6 @@
 import Button from '@/components/commons/Button/Button.svelte'
 import ColorRadioInput from '@/components/commons/ColorRadioInput/ColorRadioInput.svelte'
+import CustomLabelInput from '@/components/commons/CustomLabelInput/CustomLabelInput.svelte'
 import FormItem from '@/components/commons/FormItem/FormItem.svelte'
 import IncrementInput from '@/components/commons/IncrementInput/IncrementInput.svelte'
 import LabelPill from '@/components/commons/LabelPill/LabelPill.svelte'
@@ -37,6 +38,7 @@ const Icon = {
 export {
 	Button,
 	ColorRadioInput,
+	CustomLabelInput,
 	FormItem,
 	Icon,
 	IncrementInput,
