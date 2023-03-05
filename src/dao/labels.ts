@@ -7,6 +7,7 @@ const findAllByUserId = (userId: number, searchPhrase: string) =>
 			userId,
 			id: {
 				contains: searchPhrase,
+				mode: 'insensitive',
 			},
 		},
 		orderBy: [
