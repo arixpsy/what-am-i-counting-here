@@ -5,16 +5,15 @@
 	import type { Counter, Record } from '@prisma/client'
 	import { goto } from '$app/navigation'
 	import KeyCode from '@/@types/commons/keycode'
-	import type { CustomIncrementEvent } from '@/@types/client/records'
 	import { getCounterTypeLabel } from '@/components/Home/CounterTile/utils'
 	import { Icon } from '@/components/commons'
 	import { longpress } from '@/actions/longpress'
 	import { Routes } from '@/utils/routes'
-	import type { CounterColor } from '@/@types/client/counters'
 	import { callDeleteCounter } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
 	import { callCreateRecord } from '@/utils/fetch/records'
 	import type { GetCounterResponse } from '@/@types/api/counters'
+	import { formatCount } from '@/utils/format'
 
 	export let counter: Counter
 	export let currentCount: number
@@ -23,7 +22,7 @@
 	$: counterTypeLabel = getCounterTypeLabel(counter)
 
 	const dispatch = createEventDispatcher<{
-		'custom-increment': CustomIncrementEvent
+		'custom-increment': number
 	}>()
 	const queryClient = useQueryClient()
 	const deleteCounter = useMutation(callDeleteCounter, {
@@ -43,12 +42,7 @@
 
 	function handleClickCounter() {
 		if (counter.increment === 0) {
-			dispatch('custom-increment', {
-				counterId: counter.id,
-				counterTitle: counter.title,
-				counterColor: counter.color as CounterColor,
-				latestValue: currentCount,
-			})
+			dispatch('custom-increment', counter.id)
 			return
 		}
 		handleCounterIncrement()
@@ -127,17 +121,7 @@
 			class="my-3 w-full overflow-x-hidden overflow-y-clip text-center text-3xl font-bold"
 			in:scale|local
 		>
-			{#if counter.target}
-				{currentCount.toLocaleString(undefined, {
-					maximumFractionDigits: 2,
-					minimumFractionDigits: 0,
-				})}/{counter.target}
-			{:else}
-				{currentCount.toLocaleString(undefined, {
-					maximumFractionDigits: 2,
-					minimumFractionDigits: 0,
-				})}
-			{/if}
+			{formatCount(currentCount)}
 		</p>
 	{/key}
 </div>
