@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { createEventDispatcher, tick } from 'svelte'
+	import { derived } from 'svelte/store'
+	import { scale } from 'svelte/transition'
+	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
+	import type { Record } from '@prisma/client'
 	import type { z } from 'zod'
 	import {
 		Modal,
@@ -11,14 +15,14 @@
 	} from '@/components/commons'
 	import { IncrementPreviewTile } from '@/components/Home'
 	import { RecordFormSchema } from '@/@types/client/records'
-	import { useForm } from '@/hooks/useForm'
+	import type { GetCounterResponse } from '@/@types/api/counters'
 	import type { NewRecordRequest } from '@/@types/client/records'
-	import { useQuery } from '@sveltestack/svelte-query'
+	import { useForm } from '@/hooks/useForm'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
 	import { callGetCounters } from '@/utils/fetch/counters'
 	import { callGetLabels } from '@/utils/fetch/label'
-	import { scale } from 'svelte/transition'
-	import { derived } from 'svelte/store'
+	import { callCreateRecord } from '@/utils/fetch/records'
+	import { updateCounterCacheWithRecord } from '@/utils/queryCache'
 
 	export let counterId: number | undefined
 	export let isVisible: boolean
@@ -46,13 +50,14 @@
 				labels: recordLabels,
 				description,
 			}
-			console.log(newRecord)
-			// TODO: call api
-			dispatch('modal-close')
-			handleResetForm()
+			$createRecord.mutate(newRecord)
 		},
 	})
 	const dispatch = createEventDispatcher()
+	const queryClient = useQueryClient()
+	const createRecord = useMutation(callCreateRecord, {
+		onSuccess: createRecordSuccessCB,
+	})
 	const counters = useQuery(QueryKey.GET_COUNTERS, callGetCounters)
 	const labels = useQuery(QueryKey.GET_LATEST_LABELS, callGetLabels)
 
@@ -81,6 +86,15 @@
 
 	function handleAddLabel(label: string) {
 		form.labels = [...form.labels, label]
+	}
+
+	function createRecordSuccessCB(res: Record) {
+		queryClient.setQueryData(QueryKey.GET_COUNTERS, (data?: Array<GetCounterResponse>) => {
+			if (!data) return []
+			return updateCounterCacheWithRecord(data, res)
+		})
+		dispatch('modal-close')
+		handleResetForm()
 	}
 </script>
 
