@@ -24,13 +24,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	let record: Record
 	try {
-		// TODO: use transaction and add labels
-		record = await RecordsDao.createRecord({
-			userId: user.id,
-			counterId: newRecordRequest.counterId,
-			increment: newRecordRequest.increment,
-			description: newRecordRequest.description,
-		})
+		record = await RecordsDao.createRecord(user.id, newRecordRequest)
 	} catch {
 		return response.internalServerError('unable to create new record')
 	}
