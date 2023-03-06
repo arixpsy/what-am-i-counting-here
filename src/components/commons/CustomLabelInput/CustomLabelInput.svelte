@@ -114,10 +114,10 @@
 					<div
 						tabindex="0"
 						class="flex cursor-pointer p-2.5 transition-colors hover:bg-blue-100"
-						on:click={() => handleAddLabel(label.id)}
-						on:keyup={handleOptionKeyUp(label.id)}
+						on:click={() => handleAddLabel(label.value)}
+						on:keyup={handleOptionKeyUp(label.value)}
 					>
-						{label.id}
+						{label.value}
 					</div>
 				{:else}
 					<div class="my-3 p-2.5 text-center text-xs text-gray-400" in:fade>No matches</div>

@@ -63,7 +63,7 @@
 
 	$: counter = $counters.data?.find((c) => c.id === counterId)
 	$: filterLabels = derived(labels, ($labels) =>
-		$labels.data?.filter((l) => !form.labels.includes(l.id))
+		$labels.data?.filter((l) => !form.labels.includes(l.value))
 	)
 	$: if (isVisible) {
 		focusFirstField()
@@ -124,7 +124,8 @@
 					{#if $filterLabels}
 						{#each $filterLabels as label}
 							<div transition:scale>
-								<LabelPill clickable on:click={() => handleAddLabel(label.id)}>{label.id}</LabelPill
+								<LabelPill clickable on:click={() => handleAddLabel(label.value)}
+									>{label.value}</LabelPill
 								>
 							</div>
 						{/each}

@@ -2,15 +2,16 @@ import type { NewLabel } from '@/@types/api/labels'
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
-const createLabel = (data: NewLabel) => prisma.label.create({
-	data
-})
+const createLabel = (data: NewLabel) =>
+	prisma.label.create({
+		data,
+	})
 
 const findAllByUserId = (userId: number, searchPhrase: string) =>
 	prisma.label.findMany({
 		where: {
 			userId,
-			id: {
+			value: {
 				contains: searchPhrase,
 				mode: 'insensitive',
 			},
@@ -23,10 +24,11 @@ const findAllByUserId = (userId: number, searchPhrase: string) =>
 		take: 5,
 	})
 
-const findByLabel = (label: string) =>
-	prisma.label.findUnique({
+const findByLabel = (userId: number, value: string) =>
+	prisma.label.findFirst({
 		where: {
-			id: label,
+			userId,
+			value,
 		},
 	})
 

@@ -1,3 +1,3 @@
 import type { Label } from '@prisma/client'
 
-export type NewLabel = Pick<Label, 'id' | 'userId'>
+export type NewLabel = Pick<Label, 'value' | 'userId'>
