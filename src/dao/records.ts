@@ -23,7 +23,7 @@ const createRecord = (userId: number, data: NewRecordRequest) =>
 				})
 				labelIds.push({ id: newLabel.id })
 			} else {
-				tx.label.update({
+				await tx.label.update({
 					data: {
 						lastUsed: new Date(),
 					},
