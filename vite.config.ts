@@ -22,6 +22,12 @@ export default defineConfig({
 						type: 'image/png',
 					},
 					{
+						src: '/waich-192x192.png',
+						sizes: '192x192',
+						type: 'image/png',
+						purpose: 'maskable',
+					},
+					{
 						src: '/waich-512x512.png',
 						sizes: '512x512',
 						type: 'image/png',
@@ -30,7 +36,7 @@ export default defineConfig({
 						src: '/waich-512x512.png',
 						sizes: '512x512',
 						type: 'image/png',
-						purpose: 'any maskable',
+						purpose: 'maskable',
 					},
 				],
 			},
