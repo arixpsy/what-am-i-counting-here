@@ -17,7 +17,7 @@ export default defineConfig({
 				background_color: '#ffffff',
 				icons: [
 					{
-						src: '/waich-192x192.png',
+						src: '/waich-white-bg-192x192.png',
 						sizes: '192x192',
 						type: 'image/png',
 					},
@@ -28,7 +28,7 @@ export default defineConfig({
 						purpose: 'maskable',
 					},
 					{
-						src: '/waich-512x512.png',
+						src: '/waich-white-bg-512x512.png',
 						sizes: '512x512',
 						type: 'image/png',
 					},
@@ -40,6 +40,10 @@ export default defineConfig({
 					},
 				],
 			},
+			workbox: {
+				globPatterns: ['**/*.{js.cs}'],
+				navigateFallback: null,
+			}
 		}),
 	],
 	test: {
