@@ -1,6 +1,9 @@
 // See https://kit.svelte.dev/docs/types#app
 import type { User } from '@prisma/client'
 
+/// <reference types="vite-plugin-pwa/client" />
+/// <reference types="vite-plugin-pwa/info" />
+
 // for information about these interfaces
 declare global {
 	namespace App {
