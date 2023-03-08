@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { Icon } from '@/components/commons'
+	import { Icon, NavigationItem } from '@/components/commons'
 	import { Routes } from '@/utils/routes'
 	import { fade } from 'svelte/transition'
 
@@ -24,18 +24,6 @@
 
 	<!-- NAVIGATION TO HOME-->
 	<div class="fixed bottom-6 right-6 z-30 space-y-6">
-		<button
-			on:click={() => goto(Routes.HOME)}
-			aria-label="navigate home"
-			class="flex aspect-square w-14 items-center justify-center rounded-full bg-gray-400 text-white shadow-lg transition-colors hover:bg-gray-500"
-		>
-			<Icon.Home class="h-8 w-8" />
-		</button>
+		<NavigationItem icon={Icon.Home} ariaLabel="navigate home" on:click={() => goto(Routes.HOME)} />
 	</div>
 </div>
-
-<style>
-	button {
-		-webkit-tap-highlight-color: transparent;
-	}
-</style>

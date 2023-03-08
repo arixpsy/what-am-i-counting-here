@@ -38,6 +38,7 @@
 		{
 			icon: Icon.Calendar,
 			onClick: () => {
+				// setting isMenuOpen to false to prevent overflow page transition bug
 				isMenuOpen = false
 				goto(Routes.HISTORY)
 			},
@@ -46,6 +47,8 @@
 		{
 			icon: Icon.Cog,
 			onClick: () => {
+				// setting isMenuOpen to false to prevent overflow page transition bug
+				isMenuOpen = false
 				goto(Routes.OPTIONS)
 			},
 			label: 'view options',
