@@ -33,8 +33,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	}
 
 	try {
-		counter = await CountersDao.deleteCounter(prisma, counterIdInt)
-		// TODO: delete records of counter in transaction
+		counter = await CountersDao.deleteCounterAndRecords(prisma, counterIdInt)
 	} catch {
 		return response.internalServerError('unable to delete counter')
 	}
