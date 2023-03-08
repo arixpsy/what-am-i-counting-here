@@ -11,8 +11,8 @@
 </script>
 
 <button
-	in:fly={inFly}
-	out:fly={outFly}
+	in:fly|local={inFly}
+	out:fly|local={outFly}
 	bind:this={ref}
 	class={`flex aspect-square w-14 items-center justify-center rounded-full text-white shadow-lg transition-colors`}
 	class:bg-gray-400={!isClose}
