@@ -78,6 +78,7 @@ function getRecordFilterRange(counter: Counter, user: User) {
 		startRange = new Date(userCreatedAt)
 	} else {
 		startRange = DateTime.now()
+			.setZone(timezone)
 			.startOf(resetType.toLowerCase() as DateTimeUnit)
 			.toJSDate()
 	}
