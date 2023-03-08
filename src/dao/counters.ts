@@ -1,21 +1,20 @@
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClientOrTransaction } from '@/@types/commons/prisma'
 import type { NewCounter } from '@/@types/api/counters'
-const prisma = new PrismaClient()
 
-const createCounter = (data: NewCounter) =>
-	prisma.counter.create({
+const createCounter = (db: PrismaClientOrTransaction, data: NewCounter) =>
+	db.counter.create({
 		data,
 	})
 
-const deleteCounter = (id: number) =>
-	prisma.counter.delete({
+const deleteCounter = (db: PrismaClientOrTransaction, id: number) =>
+	db.counter.delete({
 		where: {
 			id,
 		},
 	})
 
-const findAllByUserId = (userId: number) =>
-	prisma.counter.findMany({
+const findAllByUserId = (db: PrismaClientOrTransaction, userId: number) =>
+	db.counter.findMany({
 		where: {
 			userId,
 		},
@@ -26,10 +25,10 @@ const findAllByUserId = (userId: number) =>
 		],
 	})
 
-const findById = (counterId: number) =>
-	prisma.counter.findUnique({
+const findById = (db: PrismaClientOrTransaction, id: number) =>
+	db.counter.findUnique({
 		where: {
-			id: counterId,
+			id,
 		},
 	})
 

@@ -1,57 +1,66 @@
-import { PrismaClient } from '@prisma/client'
+import type { PrismaClient } from '@prisma/client'
+import type { PrismaClientOrTransaction } from '@/@types/commons/prisma'
 import type { NewRecordRequest } from '@/@types/client/records'
-const prisma = new PrismaClient()
+import type { NewRecord } from '@/@types/api/records'
+import LabelsDao from '@/dao/labels'
 
-const createRecord = (userId: number, data: NewRecordRequest) =>
-	prisma.$transaction(async (tx) => {
+const createRecord = (
+	db: PrismaClientOrTransaction,
+	{ userId, counterId, increment, description }: NewRecord,
+	labelIds: Array<{ id: number }>
+) =>
+	db.record.create({
+		data: {
+			userId,
+			counterId,
+			increment,
+			description,
+			labels: {
+				connect: labelIds,
+			},
+		},
+	})
+
+const createRecordAndLabels = (db: PrismaClient, userId: number, data: NewRecordRequest) =>
+	db.$transaction(async (tx) => {
 		const labelIds: Array<{ id: number }> = []
 		const { increment, counterId, description } = data
 
 		for (const value of data.labels) {
-			const existingLabel = await tx.label.findFirst({
-				where: {
-					userId,
-					value,
-				},
-			})
+			const existingLabel = await LabelsDao.findByUserIdAndLabel(tx, userId, value)
+
 			if (!existingLabel) {
-				const newLabel = await tx.label.create({
-					data: {
-						userId,
-						value,
-					},
-				})
+				const newLabel = await LabelsDao.createLabel(tx, userId, value)
 				labelIds.push({ id: newLabel.id })
 			} else {
-				await tx.label.update({
-					data: {
-						lastUsed: new Date(),
-					},
-					where: {
-						id: existingLabel.id,
-					},
+				await LabelsDao.updateLabel(tx, existingLabel.id, {
+					lastUsed: new Date(),
 				})
 				labelIds.push({ id: existingLabel.id })
 			}
 		}
 
-		const record = await tx.record.create({
-			data: {
+		const record = await createRecord(
+			tx,
+			{
 				userId,
 				counterId,
 				increment,
 				description,
-				labels: {
-					connect: labelIds,
-				},
 			},
-		})
+			labelIds
+		)
 
 		return record
 	})
 
-const findAllByCounterId = (counterId: number, startRange: Date, endRange: Date) =>
-	prisma.record.findMany({
+const findAllByCounterId = (
+	db: PrismaClientOrTransaction,
+	counterId: number,
+	startRange: Date,
+	endRange: Date
+) =>
+	db.record.findMany({
 		where: {
 			counterId,
 			createdAt: {
@@ -68,6 +77,7 @@ const findAllByCounterId = (counterId: number, startRange: Date, endRange: Date)
 
 const RecordsDao = {
 	createRecord,
+	createRecordAndLabels,
 	findAllByCounterId,
 }
 

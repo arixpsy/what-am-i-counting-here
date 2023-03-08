@@ -6,6 +6,7 @@ import { CookieKey } from '@/@types/commons/cookies'
 import UsersDao from '@/dao/users'
 import { AUTH_PAGE_ROUTES, Routes } from '@/utils/routes'
 import type { VerifiedJWT } from '@/@types/api/users'
+import { prisma } from '@/utils/db'
 
 const getUserFromCookie: Handle = async ({ event, resolve }) => {
 	const authToken = event.cookies.get(CookieKey.WAICH_TOKEN)
@@ -17,7 +18,7 @@ const getUserFromCookie: Handle = async ({ event, resolve }) => {
 
 	try {
 		const decodedJwt = jwt.verify(authToken, JWT_SECRET) as VerifiedJWT
-		event.locals.user = (await UsersDao.findById(decodedJwt.id)) || undefined
+		event.locals.user = (await UsersDao.findById(prisma, decodedJwt.id)) || undefined
 	} catch (err) {
 		event.locals.user = undefined
 	}
@@ -32,6 +33,7 @@ const redirectIfAuthenticated: Handle = async ({ event, resolve }) => {
 	if (isAccessingLoginPage && isAuthenticated) {
 		throw redirect(302, Routes.HOME)
 	}
+
 	return resolve(event)
 }
 
@@ -43,6 +45,7 @@ const redirectIfNotAuthenticated: Handle = async ({ event, resolve }) => {
 	if (!isAuthenticated && isAuthPageRoute) {
 		throw redirect(302, Routes.LOGIN)
 	}
+
 	return resolve(event)
 }
 

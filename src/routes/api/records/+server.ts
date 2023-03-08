@@ -1,7 +1,8 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import type { Record } from '@prisma/client'
-import response from '@/utils/response'
 import type { NewRecordRequest } from '@/@types/client/records'
+import { prisma } from '@/utils/db'
+import response from '@/utils/response'
 import RecordsDao from '@/dao/records'
 
 // [POST]: api/records
@@ -24,7 +25,7 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 
 	let record: Record
 	try {
-		record = await RecordsDao.createRecord(user.id, newRecordRequest)
+		record = await RecordsDao.createRecordAndLabels(prisma, user.id, newRecordRequest)
 	} catch {
 		return response.internalServerError('unable to create new record')
 	}

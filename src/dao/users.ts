@@ -1,32 +1,36 @@
-import { PrismaClient, ExternalPlatform, type User } from '@prisma/client'
+import type { ExternalPlatform, User } from '@prisma/client'
+import type { PrismaClientOrTransaction } from '@/@types/commons/prisma'
 import type { NewUser } from '@/@types/api/users'
-const prisma = new PrismaClient()
 
-const createUser = (data: NewUser) =>
-	prisma.user.create({
+const createUser = (db: PrismaClientOrTransaction, data: NewUser) =>
+	db.user.create({
 		data,
 	})
 
-const findById = (userId: number) =>
-	prisma.user.findUnique({
+const findById = (db: PrismaClientOrTransaction, id: number) =>
+	db.user.findUnique({
 		where: {
-			id: userId,
+			id,
 		},
 	})
 
-const findByExternalPlatformId = (externalPlatform: ExternalPlatform, externalPlatformId: string) =>
-	prisma.user.findFirst({
+const findByExternalPlatformId = (
+	db: PrismaClientOrTransaction,
+	externalPlatform: ExternalPlatform,
+	externalPlatformId: string
+) =>
+	db.user.findFirst({
 		where: {
 			externalPlatform,
 			externalPlatformId,
 		},
 	})
 
-const updateUser = (userId: number, updatedFields: Partial<User>) =>
-	prisma.user.update({
+const updateUser = (db: PrismaClientOrTransaction, id: number, updatedFields: Partial<User>) =>
+	db.user.update({
 		data: updatedFields,
 		where: {
-			id: userId,
+			id,
 		},
 	})
 

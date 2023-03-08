@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import type { Counter } from '@prisma/client'
+import { prisma } from '@/utils/db'
 import response from '@/utils/response'
 import CountersDao from '@/dao/counters'
 
@@ -20,7 +21,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	let counter: Counter
 
 	try {
-		const existingCounter = await CountersDao.findById(counterIdInt)
+		const existingCounter = await CountersDao.findById(prisma, counterIdInt)
 		if (!existingCounter) throw new Error('counter not found')
 		counter = existingCounter
 	} catch {
@@ -32,7 +33,7 @@ export const DELETE: RequestHandler = async ({ params, locals }) => {
 	}
 
 	try {
-		counter = await CountersDao.deleteCounter(counterIdInt)
+		counter = await CountersDao.deleteCounter(prisma, counterIdInt)
 		// TODO: delete records of counter in transaction
 	} catch {
 		return response.internalServerError('unable to delete counter')

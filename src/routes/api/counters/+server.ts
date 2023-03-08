@@ -1,10 +1,11 @@
+import { ResetType, type Counter, type User, type Record } from '@prisma/client'
 import type { RequestHandler } from '@sveltejs/kit'
 import { DateTime, type DateTimeUnit } from 'luxon'
+import { prisma } from '@/utils/db'
 import response from '@/utils/response'
-import CountersDao from '@/dao/counters'
 import type { GetCounterResponse } from '@/@types/api/counters'
 import type { NewCounterRequest } from '@/@types/client/counters'
-import { ResetType, type Counter, type User, type Record } from '@prisma/client'
+import CountersDao from '@/dao/counters'
 import RecordsDao from '@/dao/records'
 
 // [GET]: api/counters
@@ -21,7 +22,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	let counters: Array<Counter> = []
 
 	try {
-		counters = await CountersDao.findAllByUserId(user.id)
+		counters = await CountersDao.findAllByUserId(prisma, user.id)
 	} catch {
 		return response.internalServerError('unable to find counters')
 	}
@@ -29,7 +30,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	for (const counter of counters) {
 		const [startRange, endRange] = getRecordFilterRange(counter, user)
 
-		const records = await RecordsDao.findAllByCounterId(counter.id, startRange, endRange)
+		const records = await RecordsDao.findAllByCounterId(prisma, counter.id, startRange, endRange)
 
 		responseBody.push({
 			...counter,
@@ -59,7 +60,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	let counter: Counter
 
 	try {
-		counter = await CountersDao.createCounter({ userId: user.id, ...newCounterRequest })
+		counter = await CountersDao.createCounter(prisma, { userId: user.id, ...newCounterRequest })
 	} catch {
 		return response.internalServerError('unable to create new counter')
 	}

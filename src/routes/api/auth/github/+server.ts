@@ -3,7 +3,8 @@ import { ExternalPlatform, type User } from '@prisma/client'
 import { DateTime } from 'luxon'
 import jwt from 'jsonwebtoken'
 import { GITHUB_OAUTH_CLIENT_ID, GITHUB_OAUTH_CLIENT_SECRET, JWT_SECRET } from '$env/static/private'
-import type { RequestHandler } from './$types'
+import type { RequestHandler } from '@sveltejs/kit'
+import { prisma } from '@/utils/db'
 import { CookieKey, WAICH_TOKEN_LIFESPAN } from '@/@types/commons/cookies'
 import { Routes } from '@/utils/routes'
 import UsersDao from '@/dao/users'
@@ -71,6 +72,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	try {
 		user = await UsersDao.findByExternalPlatformId(
+			prisma,
 			ExternalPlatform.Github,
 			githubUser.id.toString()
 		)
@@ -90,7 +92,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			newUser.timezone = timezone
 		}
 
-		user = await UsersDao.createUser(newUser)
+		user = await UsersDao.createUser(prisma, newUser)
 	}
 
 	const updatedUserFields: Partial<User> = {}
@@ -117,7 +119,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		.toJSDate()
 
 	try {
-		user = await UsersDao.updateUser(user.id, updatedUserFields)
+		user = await UsersDao.updateUser(prisma, user.id, updatedUserFields)
 	} catch (err) {
 		return response.internalServerError('unable to login')
 	}

@@ -1,5 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import type { Label } from '@prisma/client'
+import { prisma } from '@/utils/db'
 import response from '@/utils/response'
 import LabelsDao from '@/dao/labels'
 
@@ -15,7 +16,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	let labels: Array<Label> = []
 
 	try {
-		labels = await LabelsDao.findAllByUserId(user.id, '')
+		labels = await LabelsDao.findAllByUserId(prisma, user.id, '')
 	} catch {
 		return response.internalServerError('unable to find labels')
 	}
