@@ -1,18 +1,14 @@
 <script lang="ts">
 	import type { Icon } from '@/components/commons'
-	import { fly, fade } from 'svelte/transition'
+	import { fade } from 'svelte/transition'
 
 	export let icon: (typeof Icon)[keyof typeof Icon]
-	export let inFly: { x: number; delay: number } | undefined = undefined
-	export let outFly: { x: number; delay: number } | undefined = undefined
 	export let ref: HTMLButtonElement | undefined = undefined
 	export let ariaLabel: string | undefined = undefined
 	export let isClose: boolean = false
 </script>
 
 <button
-	in:fly|local={inFly}
-	out:fly|local={outFly}
 	bind:this={ref}
 	class={`flex aspect-square w-14 items-center justify-center rounded-full text-white shadow-lg transition-colors`}
 	class:bg-gray-400={!isClose}
