@@ -1,4 +1,4 @@
-import type { PrismaClient } from '@prisma/client'
+import { Prisma, type PrismaClient } from '@prisma/client'
 import type { PrismaClientOrTransaction } from '@/@types/commons/prisma'
 import type { NewRecordRequest } from '@/@types/client/records'
 import type { NewRecord } from '@/@types/api/records'
@@ -75,10 +75,39 @@ const findAllByCounterId = (
 		],
 	})
 
+const RecordsIncludeCountersLabels = Prisma.validator<Prisma.RecordInclude>()({
+	counter: true,
+	labels: true,
+})
+
+const findAllByUserId = (
+	db: PrismaClientOrTransaction,
+	size: number,
+	userId: number,
+	counterId?: number,
+	cursor?: number
+) =>
+	db.record.findMany({
+		take: size,
+		skip: cursor ? 1 : 0,
+		cursor: cursor ? {
+			id: cursor
+		}: undefined,
+		where: {
+			userId,
+			counterId,
+		},
+		orderBy: {
+			id: 'desc',
+		},
+		include: RecordsIncludeCountersLabels,
+	})
+
 const RecordsDao = {
 	createRecord,
 	createRecordAndLabels,
 	findAllByCounterId,
+	findAllByUserId,
 }
 
 export default RecordsDao
