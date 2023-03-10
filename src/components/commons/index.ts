@@ -4,6 +4,7 @@ import CustomLabelInput from '@/components/commons/CustomLabelInput/CustomLabelI
 import FormItem from '@/components/commons/FormItem/FormItem.svelte'
 import IncrementInput from '@/components/commons/IncrementInput/IncrementInput.svelte'
 import LabelPill from '@/components/commons/LabelPill/LabelPill.svelte'
+import Loader from '@/components/commons/Loader/Loader.svelte'
 import Modal from '@/components/commons/Modal/Modal.svelte'
 import Navigation from '@/components/commons/Navigation/Navigation.svelte'
 import NavigationItem from '@/components/commons/NavigationItem/NavigationItem.svelte'
@@ -43,6 +44,7 @@ export {
 	Icon,
 	IncrementInput,
 	LabelPill,
+	Loader,
 	Modal,
 	Navigation,
 	NavigationItem,
