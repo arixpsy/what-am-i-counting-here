@@ -1,6 +1,8 @@
 import type { RequestHandler } from '@sveltejs/kit'
-import type { Record } from '@prisma/client'
+import { DateTime } from 'luxon'
+import type { Counter, Label, Record } from '@prisma/client'
 import type { NewRecordRequest } from '@/@types/client/records'
+import type { GetRecordHistoryResponse, RecordWithCounterAndLabel } from '@/@types/api/records'
 import { prisma } from '@/utils/db'
 import response from '@/utils/response'
 import RecordsDao from '@/dao/records'
@@ -31,4 +33,87 @@ export const POST: RequestHandler = async ({ locals, request }) => {
 	}
 
 	return response.ok(record)
+}
+
+// [GET]: api/records
+// Returns a cursor paginate response of a list of days(desc) and the records that were created that day.
+// Loops through the records from latests to oldest and generates the response using the user's timezone
+export const GET: RequestHandler = async ({ locals, url }) => {
+	const user = locals.user
+	const sizeString = url.searchParams.get('size')
+	const cursorString = url.searchParams.get('cursor')
+	const counterIdString = url.searchParams.get('counterId')
+	let size: number
+	let cursor: number | undefined
+	let counterId: number | undefined
+
+	size = parseInt(sizeString || '')
+	if (isNaN(size)) {
+		size = 10
+	}
+
+	cursor = parseInt(cursorString || '')
+	if (isNaN(cursor)) {
+		cursor = undefined
+	}
+
+	counterId = parseInt(counterIdString || '')
+	if (isNaN(counterId)) {
+		counterId = undefined
+	}
+
+	if (!user) {
+		return response.unauthorized('user not found')
+	}
+
+	let records: Array<
+		Record & {
+			counter: Counter
+			labels: Array<Label>
+		}
+	>
+
+	try {
+		records = await RecordsDao.findAllByUserId(prisma, size, user.id, counterId, cursor)
+	} catch {
+		return response.internalServerError('unable to find records')
+	}
+
+	const cursorNext = records.length ? records[records.length - 1].id : undefined
+	const historyData: Array<{
+		date: Date
+		records: Array<RecordWithCounterAndLabel>
+	}> = []
+	let lastDate: DateTime | undefined = undefined
+	let currentDateRecords: Array<RecordWithCounterAndLabel> = []
+
+	for (const record of records) {
+		const date = DateTime.fromJSDate(record.createdAt).setZone(user.timezone)
+
+		if (!lastDate || date.toISODate() === lastDate.toISODate()) {
+			currentDateRecords.push(record)
+		} else {
+			historyData.push({
+				date: lastDate.toJSDate(),
+				records: currentDateRecords,
+			})
+			currentDateRecords = [record]
+		}
+
+		lastDate = date
+	}
+
+	if (currentDateRecords.length) {
+		historyData.push({
+			date: lastDate?.toJSDate() || new Date(),
+			records: currentDateRecords,
+		})
+	}
+
+	const responseBody: GetRecordHistoryResponse = {
+		cursorNext,
+		data: historyData,
+	}
+
+	return response.ok(responseBody)
 }
