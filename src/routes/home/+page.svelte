@@ -3,7 +3,7 @@
 	import { scale, fade } from 'svelte/transition'
 	import { useQuery } from '@sveltestack/svelte-query'
 	import { goto } from '$app/navigation'
-	import { Icon, Navigation, NavigationItem } from '@/components/commons/'
+	import { Icon, Navigation, NavigationItem, Loader } from '@/components/commons/'
 	import { AddCounterModal, CounterTile, CustomIncrementModal } from '@/components/Home'
 	import KeyCode from '@/@types/commons/keycode'
 	import { Routes } from '@/utils/routes'
@@ -126,24 +126,30 @@
 		{/if}
 	</h1>
 
+	{#if $counters.isFetching}
+		<div class="mt-20 flex justify-center">
+			<Loader />
+		</div>
+	{:else}
+		<div
+			class="grid auto-rows-min grid-cols-2 gap-3 p-3 outline-none sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
+			style="height: calc(100% - 100px);"
+		>
+			{#if $counters.data}
+				{#each $counters.data as counter (counter.id)}
+					<div animate:flip={{ duration: 400 }} in:scale>
+						<CounterTile
+							{counter}
+							currentCount={counter.currentCount}
+							{isSortMode}
+							on:custom-increment={handleCustomIncrement}
+						/>
+					</div>
+				{/each}
+			{/if}
+		</div>
+	{/if}
 	<!-- COUNTER TILES -->
-	<div
-		class="grid auto-rows-min grid-cols-2 gap-3 p-3 outline-none sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
-		style="height: calc(100% - 100px);"
-	>
-		{#if $counters.data}
-			{#each $counters.data as counter (counter.id)}
-				<div animate:flip={{ duration: 400 }} in:scale>
-					<CounterTile
-						{counter}
-						currentCount={counter.currentCount}
-						{isSortMode}
-						on:custom-increment={handleCustomIncrement}
-					/>
-				</div>
-			{/each}
-		{/if}
-	</div>
 </div>
 
 <!-- NAVIGATION MENU -->
