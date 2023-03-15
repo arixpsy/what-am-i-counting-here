@@ -4,6 +4,9 @@ import { prisma } from '@/utils/db'
 import response from '@/utils/response'
 import CountersDao from '@/dao/counters'
 
+// [DELETE]: api/counters/:counterId
+// Deletes a counter and all associated records for a given user
+// Endpoint checks if the specified counter belongs to the user before deleting the counter and records
 export const DELETE: RequestHandler = async ({ params, locals }) => {
 	const user = locals.user
 	const { slug: counterId } = params
