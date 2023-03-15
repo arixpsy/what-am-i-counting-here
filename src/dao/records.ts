@@ -54,6 +54,13 @@ const createRecordAndLabels = (db: PrismaClient, userId: number, data: NewRecord
 		return record
 	})
 
+const deleteRecord = (db: PrismaClient, id: number) =>
+	db.record.delete({
+		where: {
+			id,
+		},
+	})
+
 const findAllByCounterId = (
 	db: PrismaClientOrTransaction,
 	counterId: number,
@@ -90,9 +97,11 @@ const findAllByUserId = (
 	db.record.findMany({
 		take: size,
 		skip: cursor ? 1 : 0,
-		cursor: cursor ? {
-			id: cursor
-		}: undefined,
+		cursor: cursor
+			? {
+					id: cursor,
+			  }
+			: undefined,
 		where: {
 			userId,
 			counterId,
@@ -103,11 +112,15 @@ const findAllByUserId = (
 		include: RecordsIncludeCountersLabels,
 	})
 
+const findById = (db: PrismaClient, id: number) => db.record.findFirst({ where: { id } })
+
 const RecordsDao = {
 	createRecord,
 	createRecordAndLabels,
+	deleteRecord,
 	findAllByCounterId,
 	findAllByUserId,
+	findById,
 }
 
 export default RecordsDao
