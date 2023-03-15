@@ -20,3 +20,11 @@ export const callGetRecordHistory = async (request: GetRecordHistoryRequest) => 
 	const data = (await response.json()) as GetRecordHistoryResponse
 	return data
 }
+
+export const callDeleteRecord = async (recordId: number) => {
+	const response = await fetch(`${ROUTE}/${recordId}`, {
+		method: 'DELETE',
+	})
+	const data = (await response.json()) as number
+	return data
+}
