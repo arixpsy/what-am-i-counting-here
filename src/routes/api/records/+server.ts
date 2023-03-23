@@ -80,39 +80,10 @@ export const GET: RequestHandler = async ({ locals, url }) => {
 	}
 
 	const cursorNext = records.length ? records[records.length - 1].id : undefined
-	const historyData: Array<{
-		date: Date
-		records: Array<RecordWithCounterAndLabel>
-	}> = []
-	let lastDate: DateTime | undefined = undefined
-	let currentDateRecords: Array<RecordWithCounterAndLabel> = []
-
-	for (const record of records) {
-		const date = DateTime.fromJSDate(record.createdAt).setZone(user.timezone)
-
-		if (!lastDate || date.toISODate() === lastDate.toISODate()) {
-			currentDateRecords.push(record)
-		} else {
-			historyData.push({
-				date: lastDate.toJSDate(),
-				records: currentDateRecords,
-			})
-			currentDateRecords = [record]
-		}
-
-		lastDate = date
-	}
-
-	if (currentDateRecords.length) {
-		historyData.push({
-			date: lastDate?.toJSDate() || new Date(),
-			records: currentDateRecords,
-		})
-	}
 
 	const responseBody: GetRecordHistoryResponse = {
 		cursorNext,
-		data: historyData,
+		data: records,
 	}
 
 	return response.ok(responseBody)

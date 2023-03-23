@@ -15,8 +15,5 @@ export type GetRecordHistoryRequest = {
 
 export type GetRecordHistoryResponse = {
 	cursorNext?: number
-	data: Array<{
-		date: Date
-		records: Array<RecordWithCounterAndLabel>
-	}>
+	data: Array<RecordWithCounterAndLabel>
 }

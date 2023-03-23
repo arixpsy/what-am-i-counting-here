@@ -10,11 +10,20 @@
 	import { callGetRecordHistory } from '@/utils/fetch/records'
 	import { Routes } from '@/utils/routes'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
+	import type { RecordWithCounterAndLabel } from '@/@types/api/records'
+
+	type RecordsByDate = Array<{
+		date: string
+		records: Array<RecordWithCounterAndLabel>
+	}>
 
 	let scrollY: number
 	let size: number = 10
+	let recordByDates: RecordsByDate = []
+	let recordsIdLoaded: Array<number> = []
+	let dateToRecordArrayMap: Map<string, Array<RecordWithCounterAndLabel>> = new Map()
 
-	const historyRecords = useInfiniteQuery(
+	const records = useInfiniteQuery(
 		QueryKey.GET_RECORD_HISTORY,
 		({ pageParam = undefined }) =>
 			callGetRecordHistory({
@@ -25,6 +34,40 @@
 			getNextPageParam: (lastPage) => lastPage.cursorNext,
 		}
 	)
+
+	$: if ($records.data) {
+		for (const page of $records.data.pages) {
+			for (const record of page.data) {
+				if (recordsIdLoaded.includes(record.id)) break
+				const jsDate = new Date(record.createdAt)
+				const date = DateTime.fromJSDate(jsDate).toISODate()
+				const existingGroup = dateToRecordArrayMap.get(date)
+				if (existingGroup) {
+					existingGroup.push(record)
+				} else {
+					const newRecordArray = [record]
+					recordByDates.push({
+						date,
+						records: newRecordArray,
+					})
+					dateToRecordArrayMap.set(date, newRecordArray)
+				}
+				recordsIdLoaded.push(record.id)
+			}
+		}
+		recordByDates = recordByDates
+	}
+
+	function onDeleteRecord(e: CustomEvent<RecordWithCounterAndLabel>) {
+		const record = e.detail
+		const jsDate = new Date(record.createdAt)
+		const date = DateTime.fromJSDate(jsDate).toISODate()
+		const existingGroup = dateToRecordArrayMap.get(date)
+		if (existingGroup) {
+			const deleteRecordIndex = existingGroup.findIndex((r) => r.id === record.id)
+			existingGroup.splice(deleteRecordIndex, 1)
+		}
+	}
 </script>
 
 <svelte:window bind:scrollY />
@@ -38,38 +81,30 @@
 		History
 	</h1>
 
-	{#if $historyRecords.isFetching && !$historyRecords.isFetched}
+	{#if $records.isFetching && !$records.isFetched}
 		<div class="mt-20 flex justify-center">
 			<Loader />
 		</div>
 	{:else}
 		<div class="mx-auto mb-24 flex w-full max-w-lg flex-col py-3">
-			{#if $historyRecords.data?.pages}
-				{#each $historyRecords.data.pages as page}
-					{#each page.data as { date, records } (date)}
-						<h2 class="col-span-2 my-3 px-3 text-lg text-gray-400 first:mt-0" transition:fade>
-							{DateTime.fromJSDate(new Date(date)).toFormat('ccc, d LLL y')}
-						</h2>
-						{#each records as record, index (record.id)}
-							<div animate:flip={{ duration: 400 }} out:fade>
-								<HistoryRecord {record} {index} />
-							</div>
-						{/each}
-					{/each}
+			{#each recordByDates as { date, records } (date)}
+				<h2 class="col-span-2 my-3 px-3 text-lg text-gray-400 first:mt-0" transition:fade>
+					{DateTime.fromJSDate(new Date(date)).toFormat('ccc, d LLL y')}
+				</h2>
+				{#each records as record, index (record.id)}
+					<HistoryRecord {record} on:delete={onDeleteRecord} />
 				{/each}
-			{/if}
+			{/each}
 
-			{#if !$historyRecords.isFetchingNextPage && $historyRecords.hasNextPage}
-				<div use:visible on:visible={$historyRecords.fetchNextPage} />
-			{/if}
-
-			{#if $historyRecords.isFetchingNextPage}
+			{#if $records.isFetchingNextPage}
 				<div class="flex justify-center">
 					<Loader />
 				</div>
+			{:else if $records.hasNextPage}
+				<div use:visible on:visible={$records.fetchNextPage} />
 			{/if}
 
-			{#if $historyRecords.isFetched && !$historyRecords.hasNextPage}
+			{#if $records.isFetched && !$records.hasNextPage}
 				<div class="mt-3 text-center text-gray-400">End of history</div>
 			{/if}
 		</div>
