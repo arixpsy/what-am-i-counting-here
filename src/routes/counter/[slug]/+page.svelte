@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { Icon, NavigationItem } from '@/components/commons'
 	import Button from '@/components/commons/Button/Button.svelte'
-	import ExclamationCircle from '@/components/commons/Icons/ExclamationCircle.svelte'
+	import { CounterBarChart } from '@/components/Counter'
 	import { formatCount } from '@/utils/format'
 	import { Routes } from '@/utils/routes'
 	import { fade } from 'svelte/transition'
@@ -10,7 +10,7 @@
 
 	export let data: PageData
 
-	const { counter, currentCount } = data
+	const { counter, currentCount, chartRecords } = data
 	let scrollY: number
 </script>
 
@@ -25,9 +25,10 @@
 		>
 			{counter?.title}
 		</h1>
-		<p class="text-center text-xs text-gray-400">{counter?.resetType}</p>
+		<p class="text-center text-xs text-gray-400">{counter.resetType}</p>
 		<p class="pt-6 text-center text-4xl">{formatCount(currentCount)}</p>
 
+		<CounterBarChart data={chartRecords} color={counter.color} />
 		<!-- NAVIGATION TO HOME-->
 		<div class="fixed bottom-6 right-6 z-30 space-y-6">
 			<NavigationItem
