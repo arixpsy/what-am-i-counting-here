@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { Record } from '@prisma/client'
 import type { NewRecord } from '@/@types/api/records'
 
 const RecordIncrementValue = z
@@ -17,3 +18,10 @@ export const RecordFormSchema = z.object({
 export type NewRecordRequest = Omit<NewRecord, 'userId'> & {
 	labels: Array<string>
 }
+
+export type RecordsInChartFormat = Array<{
+	index: number
+	start: number
+	end: number
+	data: Array<Record>
+}>
