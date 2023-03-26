@@ -1,12 +1,12 @@
-import { ResetType, type Counter, type User, type Record } from '@prisma/client'
+import type { Counter } from '@prisma/client'
 import type { RequestHandler } from '@sveltejs/kit'
-import { DateTime, type DateTimeUnit } from 'luxon'
 import { prisma } from '@/utils/db'
 import response from '@/utils/response'
 import type { GetCounterResponse } from '@/@types/api/counters'
 import type { NewCounterRequest } from '@/@types/client/counters'
 import CountersDao from '@/dao/counters'
 import RecordsDao from '@/dao/records'
+import { accumulateRecordIncrements, getDefaultRecordFilterRange } from '@/utils/counters'
 
 // [GET]: api/counters
 // Returns a list of counters for a given user
@@ -28,7 +28,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 	}
 
 	for (const counter of counters) {
-		const [startRange, endRange] = getRecordFilterRange(counter, user)
+		const [startRange, endRange] = getDefaultRecordFilterRange(counter, user)
 
 		const records = await RecordsDao.findAllByCounterId(prisma, counter.id, startRange, endRange)
 
@@ -66,32 +66,4 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	return response.ok(counter)
-}
-
-function getRecordFilterRange(counter: Counter, user: User) {
-	let startRange = new Date()
-	let endRange = new Date()
-	const { timezone, createdAt: userCreatedAt } = user
-	const { resetType } = counter
-
-	if (resetType === ResetType.Never) {
-		startRange = new Date(userCreatedAt)
-	} else {
-		startRange = DateTime.now()
-			.setZone(timezone)
-			.startOf(resetType.toLowerCase() as DateTimeUnit)
-			.toJSDate()
-	}
-
-	endRange = DateTime.now()
-		.setZone(timezone)
-		.set({ millisecond: -1, second: 0, minute: 0, hour: 0 })
-		.plus({ days: 1 })
-		.toJSDate()
-
-	return [startRange, endRange]
-}
-
-function accumulateRecordIncrements(records: Array<Record>) {
-	return records.reduce((total, r) => total + r.increment, 0)
 }
