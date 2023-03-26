@@ -19,6 +19,7 @@ import Calendar from '@/components/commons/Icons/Calendar.svelte'
 import ChevronRight from '@/components/commons/Icons/ChevronRight.svelte'
 import Cog from '@/components/commons/Icons/Cog.svelte'
 import Cross from '@/components/commons/Icons/Cross.svelte'
+import ExclamationCircle from '@/components/commons/Icons/ExclamationCircle.svelte'
 import FourSquare from '@/components/commons/Icons/FourSquare.svelte'
 import Home from '@/components/commons/Icons/Home.svelte'
 import Minus from '@/components/commons/Icons/Minus.svelte'
@@ -30,6 +31,7 @@ const Icon = {
 	ChevronRight,
 	Cog,
 	Cross,
+	ExclamationCircle,
 	FourSquare,
 	Home,
 	Minus,
