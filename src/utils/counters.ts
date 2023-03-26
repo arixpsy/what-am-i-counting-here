@@ -1,5 +1,5 @@
 import { ResetType, type Counter, type User, type Record } from '@prisma/client'
-import { DateTime, type DateTimeUnit } from 'luxon'
+import { DateTime } from 'luxon'
 
 export function getDefaultRecordFilterRange(counter: Counter, user: User) {
 	const { resetType } = counter
@@ -17,7 +17,7 @@ export function getRecordFilterRangeByType(user: User, resetType: ResetType): [s
 	} else {
 		startRange = DateTime.now()
 			.setZone(timezone)
-			.startOf(resetType.toLowerCase() as DateTimeUnit)
+			.startOf(getDateUnitFromResetType(resetType))
 			.toJSDate()
 	}
 
@@ -32,4 +32,18 @@ export function getRecordFilterRangeByType(user: User, resetType: ResetType): [s
 
 export function accumulateRecordIncrements(records: Array<Record>) {
 	return records.reduce((total, r) => total + r.increment, 0)
+}
+
+export function getDateUnitFromResetType(resetType: ResetType) {
+	switch (resetType) {
+		case ResetType.Year:
+			return 'year'
+		case ResetType.Month:
+			return 'month'
+		case ResetType.Week:
+			return 'week'
+		case ResetType.Day:
+		default:
+			return 'day'
+	}
 }
