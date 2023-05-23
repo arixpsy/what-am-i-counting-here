@@ -1,24 +1,45 @@
 <script lang="ts">
+	import { Loader } from '@/components/commons'
 	import { type IButtonColor, ButtonColor } from './types'
 
 	export let color: IButtonColor = 'default'
 	export let block = false
+	export let isLoading = false
 </script>
 
-{#if color === ButtonColor.PRIMARY}
-	<button
-		on:click
-		class="rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-bold text-blue-100 transition-colors marker:text-blue-100 hover:bg-blue-700 hover:text-white"
-		class:w-full={block}
-	>
+<button
+	on:click
+	class="hover:text relative rounded-lg px-4 py-3 text-center text-sm font-bold transition-colors"
+	class:w-full={block}
+	class:primary={color === ButtonColor.PRIMARY}
+	class:cursor-not-allowed={isLoading}
+>
+	<div class:invisible={isLoading}>
 		<slot />
-	</button>
-{:else}
-	<button
-		on:click
-		class="rounded-lg bg-gray-200 px-4 py-3 text-center text-sm font-bold text-gray-400 transition-colors hover:bg-gray-300 hover:text-gray-600"
-		class:w-full={block}
-	>
-		<slot />
-	</button>
-{/if}
+	</div>
+	<div class="absolute inset-0 grid place-items-center" class:invisible={!isLoading}>
+		<Loader size="xs" color="inherit" />
+	</div>
+</button>
+
+<style>
+	button {
+		@apply bg-gray-200;
+		@apply text-gray-400;
+	}
+
+	button:hover {
+		@apply bg-gray-300;
+		@apply text-gray-600;
+	}
+
+	button.primary {
+		@apply bg-blue-600;
+		@apply text-blue-100;
+	}
+
+	button.primary:hover {
+		@apply bg-blue-700;
+		@apply text-white;
+	}
+</style>
