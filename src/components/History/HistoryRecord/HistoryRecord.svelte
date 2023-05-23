@@ -18,12 +18,14 @@
 	let wasDeleteTriggered: boolean = false
 	let width: number
 	const dispatch = createEventDispatcher<{
-		'delete': RecordWithCounterAndLabel
+		delete: RecordWithCounterAndLabel
 	}>()
 	const queryClient = useQueryClient()
 	const deleteRecord = useMutation(callDeleteRecord, {
 		onSuccess: deleteRecordSuccessCB,
-		onError: () => (wasDeleteTriggered = false)
+		onError: () => {
+			wasDeleteTriggered = false
+		},
 	})
 
 	$: recordDate = DateTime.fromJSDate(new Date(record.createdAt))
