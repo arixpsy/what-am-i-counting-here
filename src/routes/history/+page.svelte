@@ -4,7 +4,7 @@
 	import { useInfiniteQuery } from '@sveltestack/svelte-query'
 	import { DateTime } from 'luxon'
 	import { goto } from '$app/navigation'
-	import { Icon, NavigationItem, Loader, Page } from '@/components/commons'
+	import { Icon, NavigationItem, Loader, Page, PageHeader } from '@/components/commons'
 	import { HistoryRecord } from '@/components/History'
 	import { visible } from '@/actions/visible'
 	import { callGetRecordHistory } from '@/utils/fetch/records'
@@ -17,7 +17,6 @@
 		records: Array<RecordWithCounterAndLabel>
 	}>
 
-	let scrollY: number
 	let size: number = 10
 	let recordByDates: RecordsByDate = []
 	let recordsIdLoaded: Array<number> = []
@@ -70,16 +69,8 @@
 	}
 </script>
 
-<svelte:window bind:scrollY />
-
 <Page>
-	<h1
-		class="sticky top-0 z-30 bg-white py-3  text-center text-4xl"
-		class:shadow-lg={scrollY > 36}
-		in:fade
-	>
-		History
-	</h1>
+	<PageHeader>History</PageHeader>
 
 	{#if $records.isFetching && !$records.isFetched}
 		<div class="mt-20 flex justify-center">

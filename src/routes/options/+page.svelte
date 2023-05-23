@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { Button, NavigationItem, Icon, Page } from '@/components/commons'
+	import { Button, NavigationItem, Icon, Page, PageHeader } from '@/components/commons'
 	import { Routes } from '@/utils/routes'
 </script>
 
 <Page>
 	<!-- HEADER -->
-	<h1 class="sticky top-0 z-10 bg-white py-3  text-center text-4xl">
+	<PageHeader>
 		<p>Options</p>
-	</h1>
+	</PageHeader>
 
 	<div class="mx-auto mb-24 flex w-full max-w-lg flex-col py-3">
 		<a href={Routes.LOGOUT} class="block px-3">

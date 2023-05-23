@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { Icon, NavigationItem, Page } from '@/components/commons'
+	import { Icon, NavigationItem, Page, PageHeader } from '@/components/commons'
 	import Button from '@/components/commons/Button/Button.svelte'
 	import { CounterBarChart } from '@/components/Counter'
 	import { formatCount } from '@/utils/format'
@@ -11,20 +11,13 @@
 	export let data: PageData
 
 	const { counter, currentCount, chartRecords } = data
-	let scrollY: number
 </script>
-
-<svelte:window bind:scrollY />
 
 {#if counter}
 	<Page>
-		<h1
-			class="sticky top-0 z-30 bg-white py-3 text-center text-4xl"
-			class:shadow-lg={scrollY > 36}
-			in:fade
-		>
+		<PageHeader>
 			{counter?.title}
-		</h1>
+		</PageHeader>
 		<p class="text-center text-xs text-gray-400">{counter.resetType}</p>
 		<p class="pt-6 text-center text-4xl">{formatCount(currentCount)}</p>
 

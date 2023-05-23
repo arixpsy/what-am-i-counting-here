@@ -3,14 +3,13 @@
 	import { scale, fade } from 'svelte/transition'
 	import { useQuery } from '@sveltestack/svelte-query'
 	import { goto } from '$app/navigation'
-	import { Icon, Navigation, NavigationItem, Loader, Page } from '@/components/commons/'
+	import { Icon, Navigation, NavigationItem, Loader, Page, PageHeader } from '@/components/commons/'
 	import { AddCounterModal, CounterTile, CustomIncrementModal } from '@/components/Home'
 	import KeyCode from '@/@types/commons/keycode'
 	import { Routes } from '@/utils/routes'
 	import { callGetCounters } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
 
-	let scrollY: number
 	let isSortMode: boolean = false
 	let isMenuOpen: boolean = false
 	let isAddModalOpen = false
@@ -114,17 +113,17 @@
 	}
 </script>
 
-<svelte:window on:keyup={handleGlobalKeyUp} bind:scrollY />
+<svelte:window on:keyup={handleGlobalKeyUp} />
 
 <Page>
 	<!-- HEADER -->
-	<h1 class="sticky top-0 z-10 bg-white py-3 text-center text-4xl" class:shadow-lg={scrollY > 36}>
+	<PageHeader>
 		{#if isSortMode}
 			<p in:fade>Sort Mode</p>
 		{:else}
 			<p in:fade>WAICH</p>
 		{/if}
-	</h1>
+	</PageHeader>
 
 	<!-- COUNTER TILES -->
 	{#if $counters.isFetching}

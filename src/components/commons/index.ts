@@ -10,6 +10,7 @@ import Navigation from '@/components/commons/Navigation/Navigation.svelte'
 import NavigationItem from '@/components/commons/NavigationItem/NavigationItem.svelte'
 import NumberInput from '@/components/commons/NumberInput/NumberInput.svelte'
 import Page from '@/components/commons/Page/Page.svelte'
+import PageHeader from '@/components/commons/PageHeader/PageHeader.svelte'
 import RadioInput from '@/components/commons/RadioInput/RadioInput.svelte'
 import SwitchInput from '@/components/commons/SwitchInput/SwitchInput.svelte'
 import TextInput from '@/components/commons/TextInput/TextInput.svelte'
@@ -53,6 +54,7 @@ export {
 	NavigationItem,
 	NumberInput,
 	Page,
+	PageHeader,
 	RadioInput,
 	SwitchInput,
 	TextInput,
