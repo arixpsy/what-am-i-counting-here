@@ -8,6 +8,7 @@
 	export let isVisible = false
 	export let confirmText = 'Confirm'
 	export let cancelText = 'Cancel'
+	export let isConfirmLoading = false
 
 	const dispatch = createEventDispatcher<any>()
 
@@ -51,7 +52,9 @@
 				<!-- Footer -->
 				<div class="flex h-24 space-x-6 p-6">
 					<Button on:click={handleCancel} block>{cancelText}</Button>
-					<Button color="primary" on:click={handleOnConfirm} block>{confirmText}</Button>
+					<Button color="primary" on:click={handleOnConfirm} isLoading={isConfirmLoading} block>
+						{confirmText}
+					</Button>
 				</div>
 			</div>
 		</div>

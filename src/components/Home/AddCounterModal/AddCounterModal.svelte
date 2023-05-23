@@ -110,6 +110,7 @@
 	on:modal-confirm={handleFormSubmit}
 	on:modal-cancel={handleFormCancel}
 	on:modal-close={handleFormClose}
+	isConfirmLoading={$createCounter.isLoading}
 >
 	<p class="mb-3 text-3xl">Create</p>
 	<form on:submit|preventDefault={handleFormSubmit} class="flex flex-col">

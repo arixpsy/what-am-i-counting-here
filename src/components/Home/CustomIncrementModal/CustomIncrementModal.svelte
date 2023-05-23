@@ -103,6 +103,7 @@
 	on:modal-confirm={handleFormSubmit}
 	on:modal-cancel={handleFormCancel}
 	on:modal-close={handleFormClose}
+	isConfirmLoading={$createRecord.isLoading}
 >
 	<p class="mb-3 w-72 text-3xl">Add</p>
 	<form on:submit|preventDefault={handleFormSubmit} class="flex flex-col">
