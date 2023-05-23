@@ -4,7 +4,7 @@
 	import { useInfiniteQuery } from '@sveltestack/svelte-query'
 	import { DateTime } from 'luxon'
 	import { goto } from '$app/navigation'
-	import { Icon, NavigationItem, Loader } from '@/components/commons'
+	import { Icon, NavigationItem, Loader, Page } from '@/components/commons'
 	import { HistoryRecord } from '@/components/History'
 	import { visible } from '@/actions/visible'
 	import { callGetRecordHistory } from '@/utils/fetch/records'
@@ -72,7 +72,7 @@
 
 <svelte:window bind:scrollY />
 
-<div class="container mx-auto min-h-screen pt-9">
+<Page>
 	<h1
 		class="sticky top-0 z-30 bg-white py-3  text-center text-4xl"
 		class:shadow-lg={scrollY > 36}
@@ -109,9 +109,9 @@
 			{/if}
 		</div>
 	{/if}
+</Page>
 
-	<!-- NAVIGATION TO HOME-->
-	<div class="fixed bottom-6 right-6 z-30 space-y-6">
-		<NavigationItem icon={Icon.Home} ariaLabel="navigate home" on:click={() => goto(Routes.HOME)} />
-	</div>
+<!-- NAVIGATION TO HOME-->
+<div class="fixed bottom-6 right-6 z-30 space-y-6">
+	<NavigationItem icon={Icon.Home} ariaLabel="navigate home" on:click={() => goto(Routes.HOME)} />
 </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { Icon, NavigationItem } from '@/components/commons'
+	import { Icon, NavigationItem, Page } from '@/components/commons'
 	import Button from '@/components/commons/Button/Button.svelte'
 	import { CounterBarChart } from '@/components/Counter'
 	import { formatCount } from '@/utils/format'
@@ -17,7 +17,7 @@
 <svelte:window bind:scrollY />
 
 {#if counter}
-	<div class="container mx-auto min-h-screen pt-9">
+	<Page>
 		<h1
 			class="sticky top-0 z-30 bg-white py-3 text-center text-4xl"
 			class:shadow-lg={scrollY > 36}
@@ -29,14 +29,11 @@
 		<p class="pt-6 text-center text-4xl">{formatCount(currentCount)}</p>
 
 		<CounterBarChart data={chartRecords} color={counter.color} />
-		<!-- NAVIGATION TO HOME-->
-		<div class="fixed bottom-6 right-6 z-30 space-y-6">
-			<NavigationItem
-				icon={Icon.Home}
-				ariaLabel="navigate home"
-				on:click={() => goto(Routes.HOME)}
-			/>
-		</div>
+	</Page>
+
+	<!-- NAVIGATION TO HOME-->
+	<div class="fixed bottom-6 right-6 z-30 space-y-6">
+		<NavigationItem icon={Icon.Home} ariaLabel="navigate home" on:click={() => goto(Routes.HOME)} />
 	</div>
 {:else}
 	<div class="flex h-screen flex-col items-center justify-center gap-6 p-3">

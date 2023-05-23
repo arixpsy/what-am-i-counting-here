@@ -3,7 +3,7 @@
 	import { scale, fade } from 'svelte/transition'
 	import { useQuery } from '@sveltestack/svelte-query'
 	import { goto } from '$app/navigation'
-	import { Icon, Navigation, NavigationItem, Loader } from '@/components/commons/'
+	import { Icon, Navigation, NavigationItem, Loader, Page } from '@/components/commons/'
 	import { AddCounterModal, CounterTile, CustomIncrementModal } from '@/components/Home'
 	import KeyCode from '@/@types/commons/keycode'
 	import { Routes } from '@/utils/routes'
@@ -116,9 +116,9 @@
 
 <svelte:window on:keyup={handleGlobalKeyUp} bind:scrollY />
 
-<div class="container mx-auto min-h-screen pt-9">
+<Page>
 	<!-- HEADER -->
-	<h1 class="sticky top-0 z-10 bg-white py-3  text-center text-4xl" class:shadow-lg={scrollY > 36}>
+	<h1 class="sticky top-0 z-10 bg-white py-3 text-center text-4xl" class:shadow-lg={scrollY > 36}>
 		{#if isSortMode}
 			<p in:fade>Sort Mode</p>
 		{:else}
@@ -126,6 +126,7 @@
 		{/if}
 	</h1>
 
+	<!-- COUNTER TILES -->
 	{#if $counters.isFetching}
 		<div class="mt-20 flex justify-center">
 			<Loader />
@@ -149,8 +150,7 @@
 			{/if}
 		</div>
 	{/if}
-	<!-- COUNTER TILES -->
-</div>
+</Page>
 
 <!-- NAVIGATION MENU -->
 {#if isSortMode}
