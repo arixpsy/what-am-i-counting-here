@@ -32,7 +32,7 @@
 <Portal target="body">
 	{#if isVisible}
 		<div
-			class="fixed inset-0 z-20 flex items-center justify-center"
+			class="fixed inset-0 z-40 flex items-center justify-center"
 			on:keyup={handleKeyUp}
 			transition:fade
 		>
