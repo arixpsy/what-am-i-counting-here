@@ -21,7 +21,7 @@
 		<p class="text-center text-xs text-gray-400">{counter.resetType}</p>
 		<p class="pt-6 text-center text-4xl">{formatCount(currentCount)}</p>
 
-		<CounterBarChart data={chartRecords} color={counter.color} />
+		<CounterBarChart data={chartRecords} color={counter.color} {counter} />
 	</Page>
 
 	<!-- NAVIGATION TO HOME-->

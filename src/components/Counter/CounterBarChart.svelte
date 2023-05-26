@@ -5,9 +5,12 @@
 	import colors from 'tailwindcss/colors'
 	import type { RecordsInChartFormat } from '@/@types/client/records'
 	import { accumulateRecordIncrements } from '@/utils/counters'
+	import type { Counter, ResetType } from '@prisma/client'
+	import { CounterBarChartXAxisLabel } from '@/utils/chart'
 
 	export let color: string
 	export let data: RecordsInChartFormat
+	export let counter: Counter
 
 	let numOfRecords = data.length
 	let chartLayerElement: SVGSVGElement
@@ -83,9 +86,11 @@
 					.axisBottom(xScale)
 					.ticks(numOfRecords)
 					.tickFormat((v, i) =>
-						i !== numOfRecords - 1
-							? DateTime.fromSeconds(data[v.valueOf()].end).toFormat('d LLL')
-							: 'Today'
+						CounterBarChartXAxisLabel(
+							DateTime.fromSeconds(data[v.valueOf()].start),
+							counter.resetType,
+							i === numOfRecords - 1
+						)
 					)
 			)
 			.call((g) => g.select('.domain').remove())
