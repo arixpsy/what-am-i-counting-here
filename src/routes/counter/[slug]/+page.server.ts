@@ -21,20 +21,30 @@ export const load = (async ({ params, locals }) => {
 		if (counter && user) {
 			const unit = getDateUnitFromResetType(counter.resetType)
 
+			let end = DateTime.now().setZone(user.timezone)
+			let start = DateTime.now().setZone(user.timezone)
 
-			// TODO: clean up
-			let end = DateTime.now()
-				.setZone(user.timezone)
-				.set({ millisecond: -1, second: 0, minute: 0, hour: 0 })
-				.plus({ day: 1 })
-			const startFilter = end.minus({ [unit]: SIZE })
-			let start = end.minus({ [unit]: 1 })
+			if (unit === 'year') {
+				start = start.set({ millisecond: 0, second: 0, minute: 0, hour: 0, day: 1, month: 1 })
+				end = end.set({ millisecond: 999, second: 59, minute: 59, hour: 23, day: 31 , month: 12 })
+			} else if (unit === 'month') {
+				start = start.set({ millisecond: 0, second: 0, minute: 0, hour: 0, day: 1 })
+				end = end.set({ millisecond: 999, second: 59, minute: 59, hour: 23, day: end.daysInMonth })
+			} else if (unit === 'week') {
+				start = start.set({ millisecond: 0, second: 0, minute: 0, hour: 0, weekday: 1 })
+				end = end.set({ millisecond: 999, second: 59, minute: 59, hour: 23, weekday: 7 })
+			} else {
+				start = start.set({ millisecond: 0, second: 0, minute: 0, hour: 0 })
+				end = end.set({ millisecond: 999, second: 59, minute: 59, hour: 23 })
+			}
 
+			const startFilterRange = start.minus({ [unit]: SIZE - 1 }).toJSDate()
+			const endFilterRange = end.toJSDate()
 			const records = await RecordsDao.findAllByCounterId(
 				prisma,
 				counter.id,
-				startFilter.toJSDate(),
-				end.toJSDate()
+				startFilterRange,
+				endFilterRange
 			)
 
 			for (let i = SIZE - 1; i >= 0; i--) {
