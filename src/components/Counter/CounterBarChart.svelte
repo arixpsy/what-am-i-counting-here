@@ -1,20 +1,35 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
+	import { onMount, createEventDispatcher } from 'svelte'
 	import * as d3 from 'd3'
 	import { DateTime } from 'luxon'
 	import colors from 'tailwindcss/colors'
 	import type { RecordsInChartFormat } from '@/@types/client/records'
 	import { accumulateRecordIncrements } from '@/utils/counters'
-	import type { Counter, ResetType } from '@prisma/client'
+	import type { Counter, Record } from '@prisma/client'
 	import { CounterBarChartXAxisLabel } from '@/utils/chart'
 
 	export let color: string
 	export let data: RecordsInChartFormat
 	export let counter: Counter
+	export let selectedIndex: number
 
 	let numOfRecords = data.length
 	let chartLayerElement: SVGSVGElement
 	let fixedAxisLayerElement: SVGSVGElement
+	let bars: d3.Selection<
+		d3.BaseType | SVGRectElement,
+		{
+			index: number
+			start: number
+			end: number
+			data: Record[]
+		},
+		SVGGElement,
+		unknown
+	>
+	let xScale: d3.ScaleLinear<number, number, never>
+	let yScale: d3.ScaleLinear<number, number, never>
+	let hasMounted = false
 
 	const CHART_HEIGHT = 300
 	const CHART_WIDTH = numOfRecords * 60
@@ -27,16 +42,40 @@
 	const X_OFFSET_AXIS = 22
 	const X_OFFSET_BAR = 12
 	const BAR_WIDTH = 20
+	const dispatch = createEventDispatcher<{
+		selectIndex: number
+	}>()
+
+	$: if (selectedIndex && bars && hasMounted) {
+		render()
+	}
+
+	function render() {
+		d3.select(chartLayerElement)
+			.selectAll('rect')
+			.data(data)
+			.join('rect')
+			.transition()
+			.duration(750)
+			.attr('y', (v) => yScale(accumulateRecordIncrements(v.data)))
+			.attr(
+				'height',
+				(v) =>
+					CHART_HEIGHT - PADDING.TOP - PADDING.BOTTOM - yScale(accumulateRecordIncrements(v.data))
+			)
+			.duration(350)
+			.attr('fill', (v) => (v.index === selectedIndex ? color : colors.gray[300]))
+	}
 
 	onMount(() => {
 		let maxY = d3.max(data.flatMap((i) => accumulateRecordIncrements(i.data)))
 
-		const xScale = d3
+		xScale = d3
 			.scaleLinear()
 			.domain([0, numOfRecords - 1])
 			.range([0, CHART_WIDTH - PADDING.LEFT - PADDING.RIGHT])
 
-		const yScale = d3
+		yScale = d3
 			.scaleLinear()
 			.domain([0, maxY || 0])
 			.range([CHART_HEIGHT - PADDING.BOTTOM - PADDING.TOP, 0])
@@ -57,7 +96,7 @@
 			.style('pointer-events', 'none')
 
 		// Bars
-		chartLayer
+		bars = chartLayer
 			.append('g')
 			.selectAll('rect')
 			.data(data)
@@ -67,16 +106,10 @@
 			.attr('x', (v) => xScale(v.index))
 			.attr('y', yScale(0))
 			.attr('rx', 5)
-			.attr('fill', color)
+			.attr('fill', (v) => (v.index === selectedIndex ? color : '#e8e8e8'))
 			.attr('transform', `translate(${X_OFFSET_BAR}, ${PADDING.TOP})`)
-			.transition()
-			.duration(750)
-			.attr('y', (v) => yScale(accumulateRecordIncrements(v.data)))
-			.attr(
-				'height',
-				(v) =>
-					CHART_HEIGHT - PADDING.TOP - PADDING.BOTTOM - yScale(accumulateRecordIncrements(v.data))
-			)
+			.on('click', (_, t) => dispatch('selectIndex', t.index))
+			.style('cursor', 'pointer')
 
 		// X Axis
 		chartLayer
@@ -113,6 +146,9 @@
 					.attr('font-size', '0.725em')
 			)
 			.attr('transform', `translate(${PADDING.LEFT}, ${PADDING.TOP})`)
+
+		hasMounted = true
+		render()
 	})
 </script>
 

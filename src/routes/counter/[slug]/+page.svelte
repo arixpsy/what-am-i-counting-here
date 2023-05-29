@@ -7,10 +7,19 @@
 	import { Routes } from '@/utils/routes'
 	import { fade } from 'svelte/transition'
 	import type { PageData } from './$types'
+	import { accumulateRecordIncrements } from '@/utils/counters'
 
 	export let data: PageData
 
-	const { counter, currentCount, chartRecords } = data
+	const { counter, chartRecords } = data
+
+	let selectedIndex = chartRecords.length - 1
+
+	$: selectedIndexCount = formatCount(accumulateRecordIncrements(chartRecords[selectedIndex].data))
+
+	function handleSelectIndex(event: CustomEvent<number>) {
+		selectedIndex = event.detail
+	}
 </script>
 
 {#if counter}
@@ -19,9 +28,19 @@
 			{counter?.title}
 		</PageHeader>
 		<p class="text-center text-xs text-gray-400">{counter.resetType}</p>
-		<p class="pt-6 text-center text-4xl">{formatCount(currentCount)}</p>
+		{#key selectedIndex}
+			<p class="pt-6 text-center text-4xl" in:fade>
+				{selectedIndexCount}
+			</p>
+		{/key}
 
-		<CounterBarChart data={chartRecords} color={counter.color} {counter} />
+		<CounterBarChart
+			{counter}
+			{selectedIndex}
+			data={chartRecords}
+			color={counter.color}
+			on:selectIndex={handleSelectIndex}
+		/>
 	</Page>
 
 	<!-- NAVIGATION TO HOME-->
