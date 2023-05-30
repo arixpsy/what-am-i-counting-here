@@ -13,7 +13,8 @@
 
 	const { counter, chartRecords } = data
 
-	let selectedIndex = chartRecords.length - 1
+	let lastIndexWithRecords = chartRecords.findLastIndex((r) => r.data.length > 0)
+	let selectedIndex = lastIndexWithRecords > 0 ? lastIndexWithRecords : chartRecords.length - 1
 
 	$: selectedIndexCount = formatCount(accumulateRecordIncrements(chartRecords[selectedIndex].data))
 
