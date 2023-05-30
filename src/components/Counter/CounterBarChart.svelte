@@ -64,7 +64,7 @@
 					CHART_HEIGHT - PADDING.TOP - PADDING.BOTTOM - yScale(accumulateRecordIncrements(v.data))
 			)
 			.duration(350)
-			.attr('fill', (v) => (v.index === selectedIndex ? color : colors.gray[300]))
+			.attr('fill', (v) => (v.index === selectedIndex ? color : '#e8e8e8'))
 	}
 
 	onMount(() => {
@@ -106,7 +106,6 @@
 			.attr('x', (v) => xScale(v.index))
 			.attr('y', yScale(0))
 			.attr('rx', 5)
-			.attr('fill', (v) => (v.index === selectedIndex ? color : '#e8e8e8'))
 			.attr('transform', `translate(${X_OFFSET_BAR}, ${PADDING.TOP})`)
 			.on('click', (_, t) => dispatch('selectIndex', t.index))
 			.style('cursor', 'pointer')
