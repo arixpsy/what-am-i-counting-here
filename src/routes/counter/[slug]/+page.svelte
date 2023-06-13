@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { Icon, NavigationItem, Page, PageHeader } from '@/components/commons'
 	import Button from '@/components/commons/Button/Button.svelte'
-	import { CounterBarChart } from '@/components/Counter'
+	import { CounterBarChart, RecordBreakdown } from '@/components/Counter'
 	import { formatCount } from '@/utils/format'
 	import { Routes } from '@/utils/routes'
 	import { fade } from 'svelte/transition'
@@ -17,6 +17,7 @@
 	let selectedIndex = lastIndexWithRecords > 0 ? lastIndexWithRecords : chartRecords.length - 1
 
 	$: selectedIndexCount = formatCount(accumulateRecordIncrements(chartRecords[selectedIndex].data))
+	$: selectedIndexRecords = chartRecords[selectedIndex].data
 
 	function handleSelectIndex(event: CustomEvent<number>) {
 		selectedIndex = event.detail
@@ -42,6 +43,8 @@
 			color={counter.color}
 			on:selectIndex={handleSelectIndex}
 		/>
+
+		<RecordBreakdown records={selectedIndexRecords} />
 	</Page>
 
 	<!-- NAVIGATION TO HOME-->
