@@ -80,6 +80,7 @@ const findAllByCounterId = (
 				createdAt: 'desc',
 			},
 		],
+		include: RecordsIncludeCountersLabels,
 	})
 
 const RecordsIncludeCountersLabels = Prisma.validator<Prisma.RecordInclude>()({

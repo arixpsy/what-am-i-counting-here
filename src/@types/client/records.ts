@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import type { Record } from '@prisma/client'
-import type { NewRecord } from '@/@types/api/records'
+import type { NewRecord, RecordWithCounterAndLabel } from '@/@types/api/records'
 
 const RecordIncrementValue = z
 	.number({
@@ -23,5 +22,5 @@ export type RecordsInChartFormat = Array<{
 	index: number
 	start: number
 	end: number
-	data: Array<Record>
+	data: Array<RecordWithCounterAndLabel>
 }>

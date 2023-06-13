@@ -5,8 +5,9 @@
 	import colors from 'tailwindcss/colors'
 	import type { RecordsInChartFormat } from '@/@types/client/records'
 	import { accumulateRecordIncrements } from '@/utils/counters'
-	import type { Counter, Record } from '@prisma/client'
+	import type { Counter } from '@prisma/client'
 	import { CounterBarChartXAxisLabel } from '@/utils/chart'
+	import type { RecordWithCounterAndLabel } from '@/@types/api/records'
 
 	export let color: string
 	export let data: RecordsInChartFormat
@@ -22,7 +23,7 @@
 			index: number
 			start: number
 			end: number
-			data: Record[]
+			data: RecordWithCounterAndLabel[]
 		},
 		SVGGElement,
 		unknown
