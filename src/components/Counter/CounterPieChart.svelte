@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import * as d3 from 'd3'
+	import { fade } from 'svelte/transition'
 
 	export let data: Array<[string, number]>
 	export let colorScale: d3.ScaleOrdinal<string, unknown, never> = d3
@@ -9,15 +10,41 @@
 
 	let clientWidth: number
 	let chartContainerElement: HTMLDivElement
+	let chartSelection: d3.Selection<SVGGElement, unknown, null, undefined>
+	let pieArc: d3.Arc<any, d3.DefaultArcObject>
+	let hasMounted = false
+
+	$: if (data && hasMounted) {
+		render()
+	}
+
+	function render() {
+		const pie = d3.pie().value((d: any) => d[1])
+		const pieData = pie(data as unknown as (number | { valueOf(): number })[])
+		console.log(pieArc)
+		chartSelection
+			.selectAll('path')
+			.data(pieData)
+			.join('path')
+			.attr('d', pieArc as unknown as string)
+			.attr('fill', (d: any) => colorScale(d.data[0]) as string)
+			.attr('stroke', 'white')
+			.style('stroke-width', '2px')
+			.style('scale', 0)
+			.style('opacity', 0)
+			.transition()
+			.duration(250)
+			.style('scale', 1)
+			.style('opacity', 1)
+	}
 
 	onMount(() => {
-		const width = clientWidth / 1.5
-		const height = clientWidth / 1.5
-		const margin = 30
+		const width = clientWidth / 2
+		const height = clientWidth / 2
+		const margin = 15
 		const radius = Math.min(width, height) / 2 - margin
 
-		// append the svg object to the div called 'my_dataviz'
-		const svg = d3
+		chartSelection = d3
 			.select(chartContainerElement)
 			.append('svg')
 			.attr('width', width)
@@ -25,31 +52,24 @@
 			.append('g')
 			.attr('transform', `translate(${width / 2}, ${height / 2})`)
 
-		const pie = d3.pie().value((d) => d[1])
-		const data_ready = pie(data)
-		const arcGenerator = d3.arc().innerRadius(0).outerRadius(radius)
+		pieArc = d3.arc().innerRadius(0).outerRadius(radius)
 
-		svg
-			.selectAll('mySlices')
-			.data(data_ready)
-			.join('path')
-			.attr('d', arcGenerator)
-			.attr('fill', function (d) {
-				return colorScale(d.data[0])
-			})
-			.attr('stroke', 'white')
-			.style('stroke-width', '2px')
-			.style('opacity', 0.7)
+		hasMounted = true
 	})
 </script>
 
-<div bind:this={chartContainerElement} class="relative flex max-w-lg justify-center" bind:clientWidth />
+<div
+	bind:this={chartContainerElement}
+	class="relative flex max-w-lg justify-center"
+	bind:clientWidth
+/>
 
-<div>
-	{#each data as entry}
-		{@const color = colorScale(entry[0])}
-		<div style:background={color}>
-			<p>{entry[0] || 'Others'}</p>
+<div class="flex flex-wrap justify-center gap-x-3 gap-y-1 px-3">
+	{#each data as [category] (category)}
+		{@const color = `${colorScale(category)}`}
+		<div class="flex items-center gap-1" in:fade>
+			<div class="h-3 w-3 rounded-full" style:background={color} />
+			<p class="text-sm">{category || 'Others'}</p>
 		</div>
 	{/each}
 </div>
