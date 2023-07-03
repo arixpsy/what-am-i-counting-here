@@ -1,8 +1,7 @@
 <script lang='ts'>
 	import { onMount } from 'svelte'
-	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query'
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query'
 	import { pwaInfo } from 'virtual:pwa-info';
-	import { browser } from '$app/environment'
 	import '../app.css'
 
 	let ReloadPrompt: ConstructorOfATypedSvelteComponent
@@ -16,7 +15,7 @@
 	const client = new QueryClient({
 		defaultOptions: {
 			queries: {
-				enabled: browser,
+				enabled: false,
 				refetchOnWindowFocus: false,
 			},
 		},
