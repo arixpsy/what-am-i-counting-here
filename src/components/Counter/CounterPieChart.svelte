@@ -21,7 +21,7 @@
 	function render() {
 		const pie = d3.pie().value((d: any) => d[1])
 		const pieData = pie(data as unknown as (number | { valueOf(): number })[])
-		console.log(pieArc)
+
 		chartSelection
 			.selectAll('path')
 			.data(pieData)

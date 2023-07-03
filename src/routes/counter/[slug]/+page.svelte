@@ -16,8 +16,10 @@
 	let lastIndexWithRecords = chartRecords.findLastIndex((r) => r.data.length > 0)
 	let selectedIndex = lastIndexWithRecords > 0 ? lastIndexWithRecords : chartRecords.length - 1
 
-	$: selectedIndexCount = formatCount(accumulateRecordIncrements(chartRecords[selectedIndex].data))
-	$: selectedIndexRecords = chartRecords[selectedIndex].data
+	$: selectedIndexCount = formatCount(
+		accumulateRecordIncrements(chartRecords[selectedIndex]?.data || [])
+	)
+	$: selectedIndexRecords = chartRecords[selectedIndex]?.data || []
 
 	function handleSelectIndex(event: CustomEvent<number>) {
 		selectedIndex = event.detail
