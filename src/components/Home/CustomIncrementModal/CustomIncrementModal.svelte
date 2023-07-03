@@ -2,7 +2,7 @@
 	import { createEventDispatcher, tick } from 'svelte'
 	import { derived } from 'svelte/store'
 	import { scale } from 'svelte/transition'
-	import { useMutation, useQuery, useQueryClient } from '@sveltestack/svelte-query'
+	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import type { Record } from '@prisma/client'
 	import type { z } from 'zod'
 	import {
@@ -55,11 +55,12 @@
 	})
 	const dispatch = createEventDispatcher()
 	const queryClient = useQueryClient()
-	const createRecord = useMutation(callCreateRecord, {
+	const createRecord = createMutation(callCreateRecord, {
 		onSuccess: createRecordSuccessCB,
 	})
-	const counters = useQuery(QueryKey.GET_COUNTERS, callGetCounters)
-	const labels = useQuery(QueryKey.GET_LATEST_LABELS, callGetLabels)
+	const counters = createQuery({ queryKey: QueryKey.GET_COUNTERS, queryFn: callGetCounters})
+	const labels = createQuery({ queryKey: QueryKey.GET_LATEST_LABELS, queryFn: callGetLabels, enabled: true})
+
 
 	$: counter = $counters.data?.find((c) => c.id === counterId)
 	$: filterLabels = derived(labels, ($labels) =>
