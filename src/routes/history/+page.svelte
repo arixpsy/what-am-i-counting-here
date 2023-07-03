@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate'
 	import { fade } from 'svelte/transition'
-	import { useInfiniteQuery } from '@sveltestack/svelte-query'
+	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { DateTime } from 'luxon'
 	import { goto } from '$app/navigation'
 	import { Icon, NavigationItem, Loader, Page, PageHeader } from '@/components/commons'
@@ -11,28 +11,30 @@
 	import { Routes } from '@/utils/routes'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
 	import type { RecordWithCounterAndLabel } from '@/@types/api/records'
+	import type { PageData } from './$types'
 
 	type RecordsByDate = Array<{
 		date: string
 		records: Array<RecordWithCounterAndLabel>
 	}>
 
+	export let data: PageData
+
 	let size: number = 10
 	let recordByDates: RecordsByDate = []
 	let recordsIdLoaded: Array<number> = []
 	let dateToRecordArrayMap: Map<string, Array<RecordWithCounterAndLabel>> = new Map()
 
-	const records = useInfiniteQuery(
-		QueryKey.GET_RECORD_HISTORY,
-		({ pageParam = undefined }) =>
+	const records = createInfiniteQuery({
+		queryKey: QueryKey.GET_RECORD_HISTORY,
+		queryFn: ({ pageParam = undefined }) =>
 			callGetRecordHistory({
 				size,
 				cursor: pageParam,
 			}),
-		{
-			getNextPageParam: (lastPage) => lastPage.cursorNext,
-		}
-	)
+		getNextPageParam: (lastPage) => lastPage.cursorNext,
+		initialData: { pages: [data.records], pageParams: [undefined] },
+	})
 
 	$: if ($records.data) {
 		for (const page of $records.data.pages) {
