@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import { fade, scale } from 'svelte/transition'
-	import { useMutation } from '@sveltestack/svelte-query'
+	import { createMutation } from '@tanstack/svelte-query'
 	import KeyCode from '@/@types/commons/keycode'
 	import { LabelPill } from '@/components/commons'
 	import { capitalizeWord } from '@/utils/format'
@@ -14,9 +14,9 @@
 	let inputRef: HTMLInputElement
 
 	const dispatch = createEventDispatcher()
-	const similarLabels = useMutation(QueryKey.GET_LATEST_LABELS, callSearchLabels)
+	const similarLabels = createMutation(QueryKey.GET_LATEST_LABELS, callSearchLabels)
 
-	async function handleKeyPress(e: KeyboardEvent) {
+	async function handleKeydown(e: KeyboardEvent) {
 		switch (e.code) {
 			case KeyCode.ENTER:
 				e.preventDefault()
@@ -87,7 +87,7 @@
 		bind:this={inputRef}
 		size="5"
 		class="w-full min-w-fit flex-1 bg-inherit py-1 outline-none"
-		on:keypress={handleKeyPress}
+		on:keydown={handleKeydown}
 	/>
 </div>
 <div class="relative">
