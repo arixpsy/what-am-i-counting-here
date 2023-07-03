@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher, tick } from 'svelte'
 	import { fade } from 'svelte/transition'
-	import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
+	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import type { z } from 'zod'
 	import {
 		Modal,
@@ -19,10 +19,11 @@
 		CounterFormSchema,
 		type NewCounterRequest,
 	} from '@/@types/client/counters'
-	import { ResetType } from '@prisma/client'
+	import { ResetType, type Counter } from '@prisma/client'
 	import { useForm } from '@/hooks/useForm'
 	import { callCreateCounter } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
+	import type { GetCounterResponse } from '@/@types/api/counters'
 
 	export let isVisible: boolean = false
 
@@ -57,7 +58,7 @@
 	})
 	const dispatch = createEventDispatcher()
 	const queryClient = useQueryClient()
-	const createCounter = useMutation(callCreateCounter, {
+	const createCounter = createMutation(callCreateCounter, {
 		onSuccess: submitCounterSuccessCB,
 	})
 
@@ -98,8 +99,15 @@
 		form.color = event.detail
 	}
 
-	function submitCounterSuccessCB() {
-		queryClient.invalidateQueries({ queryKey: QueryKey.GET_COUNTERS })
+	function submitCounterSuccessCB(res: Counter) {
+		queryClient.setQueryData(QueryKey.GET_COUNTERS, (cache?: Array<GetCounterResponse>) => {
+			const updatedCache = cache ? cache : []
+			updatedCache.push({
+				...res,
+				currentCount: 0,
+			})
+			return updatedCache
+		})
 		dispatch('modal-close')
 		handleResetForm()
 	}
