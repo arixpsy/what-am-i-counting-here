@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { flip } from 'svelte/animate'
 	import { scale, fade } from 'svelte/transition'
-	import { useQuery } from '@sveltestack/svelte-query'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
 	import { Icon, Navigation, NavigationItem, Loader, Page, PageHeader } from '@/components/commons/'
 	import { AddCounterModal, CounterTile, CustomIncrementModal } from '@/components/Home'
@@ -9,6 +9,9 @@
 	import { Routes } from '@/utils/routes'
 	import { callGetCounters } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
+	import type { PageData } from './$types'
+
+	export let data: PageData
 
 	let isSortMode: boolean = false
 	let isMenuOpen: boolean = false
@@ -16,7 +19,12 @@
 	let isCustomIncrementModalOpen = false
 	let customIncrementEvent: number | undefined = undefined
 
-	const counters = useQuery(QueryKey.GET_COUNTERS, callGetCounters)
+	const counters = createQuery({
+		queryKey: QueryKey.GET_COUNTERS,
+		queryFn: callGetCounters,
+		initialData: data.counters,
+	})
+
 	const navItems = [
 		{
 			icon: Icon.Plus,
