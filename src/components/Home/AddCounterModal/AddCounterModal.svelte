@@ -24,6 +24,7 @@
 	import { callCreateCounter } from '@/utils/fetch/counters'
 	import { QueryKey } from '@/utils/fetch/queryKeys'
 	import type { GetCounterResponse } from '@/@types/api/counters'
+	import { updateCountersCacheWithNewCounter } from '@/utils/queryCache'
 
 	export let isVisible: boolean = false
 
@@ -100,14 +101,9 @@
 	}
 
 	function submitCounterSuccessCB(res: Counter) {
-		queryClient.setQueryData(QueryKey.GET_COUNTERS, (cache?: Array<GetCounterResponse>) => {
-			const updatedCache = cache ? cache : []
-			updatedCache.push({
-				...res,
-				currentCount: 0,
-			})
-			return updatedCache
-		})
+		queryClient.setQueryData(QueryKey.GET_COUNTERS, (cache?: Array<GetCounterResponse>) =>
+			updateCountersCacheWithNewCounter(cache || [], res)
+		)
 		dispatch('modal-close')
 		handleResetForm()
 	}

@@ -1,5 +1,19 @@
-import type { Record } from '@prisma/client'
+import type { Counter, Record } from '@prisma/client'
 import type { GetCounterResponse } from '@/@types/api/counters'
+
+export const updateCountersCacheWithNewCounter = (
+	currentCache: Array<GetCounterResponse>,
+	newCounter: Counter
+) => {
+	const newCache: Array<GetCounterResponse> = [...currentCache]
+
+	newCache.push({
+		...newCounter,
+		currentCount: 0,
+	})
+
+	return newCache
+}
 
 export const updateCounterCacheWithRecord = (
 	currentCache: Array<GetCounterResponse>,
