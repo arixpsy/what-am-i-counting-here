@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 	import { scale } from 'svelte/transition'
-	import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
+	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import type { Counter, Record } from '@prisma/client'
 	import { goto } from '$app/navigation'
 	import KeyCode from '@/@types/commons/keycode'
@@ -26,10 +26,10 @@
 		'custom-increment': number
 	}>()
 	const queryClient = useQueryClient()
-	const deleteCounter = useMutation(callDeleteCounter, {
+	const deleteCounter = createMutation(callDeleteCounter, {
 		onSuccess: deleteCounterSuccessCB,
 	})
-	const createRecord = useMutation(callCreateRecord, {
+	const createRecord = createMutation(callCreateRecord, {
 		onSuccess: createRecordSuccessCB,
 	})
 
@@ -68,12 +68,16 @@
 
 	function deleteCounterSuccessCB() {
 		queryClient.invalidateQueries({ queryKey: QueryKey.GET_COUNTERS })
+		queryClient.setQueryData(QueryKey.GET_COUNTERS, (cache?: Array<GetCounterResponse>) => {
+			if (!cache) return []
+			return cache.filter((c) => c.id !== counter.id)
+		})
 	}
 
 	function createRecordSuccessCB(res: Record) {
-		queryClient.setQueryData(QueryKey.GET_COUNTERS, (data?: Array<GetCounterResponse>) => {
-			if (!data) return []
-			return updateCounterCacheWithRecord(data, res)
+		queryClient.setQueryData(QueryKey.GET_COUNTERS, (cache?: Array<GetCounterResponse>) => {
+			if (!cache) return []
+			return updateCounterCacheWithRecord(cache, res)
 		})
 	}
 </script>
