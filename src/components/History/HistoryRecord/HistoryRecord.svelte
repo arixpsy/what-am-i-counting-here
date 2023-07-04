@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte'
 	import { fade, fly } from 'svelte/transition'
 	import { spring } from 'svelte/motion'
-	import { useMutation, useQueryClient } from '@sveltestack/svelte-query'
+	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { DateTime } from 'luxon'
 	import type { RecordWithCounterAndLabel } from '@/@types/api/records'
 	import { Icon } from '@/components/commons'
@@ -21,7 +21,7 @@
 		delete: RecordWithCounterAndLabel
 	}>()
 	const queryClient = useQueryClient()
-	const deleteRecord = useMutation(callDeleteRecord, {
+	const deleteRecord = createMutation(callDeleteRecord, {
 		onSuccess: deleteRecordSuccessCB,
 		onError: () => {
 			wasDeleteTriggered = false
