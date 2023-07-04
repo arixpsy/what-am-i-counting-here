@@ -67,7 +67,6 @@
 	}
 
 	function deleteCounterSuccessCB() {
-		queryClient.invalidateQueries({ queryKey: QueryKey.GET_COUNTERS })
 		queryClient.setQueryData(QueryKey.GET_COUNTERS, (cache?: Array<GetCounterResponse>) => {
 			if (!cache) return []
 			return cache.filter((c) => c.id !== counter.id)
