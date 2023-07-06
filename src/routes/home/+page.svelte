@@ -134,29 +134,23 @@
 	</PageHeader>
 
 	<!-- COUNTER TILES -->
-	{#if $counters.isFetching}
-		<div class="mt-20 flex justify-center">
-			<Loader />
-		</div>
-	{:else}
-		<div
-			class="grid auto-rows-min grid-cols-2 gap-3 p-3 outline-none sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
-			style="height: calc(100% - 100px);"
-		>
-			{#if $counters.data}
-				{#each $counters.data as counter (counter.id)}
-					<div animate:flip={{ duration: 400 }} in:scale>
-						<CounterTile
-							{counter}
-							currentCount={counter.currentCount}
-							{isSortMode}
-							on:custom-increment={handleCustomIncrement}
-						/>
-					</div>
-				{/each}
-			{/if}
-		</div>
-	{/if}
+	<div
+		class="grid auto-rows-min grid-cols-2 gap-3 p-3 outline-none sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8"
+		style="height: calc(100% - 100px);"
+	>
+		{#if $counters.data}
+			{#each $counters.data as counter (counter.id)}
+				<div animate:flip={{ duration: 400 }} in:scale>
+					<CounterTile
+						{counter}
+						currentCount={counter.currentCount}
+						{isSortMode}
+						on:custom-increment={handleCustomIncrement}
+					/>
+				</div>
+			{/each}
+		{/if}
+	</div>
 </Page>
 
 <!-- NAVIGATION MENU -->

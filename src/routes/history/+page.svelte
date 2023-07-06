@@ -74,34 +74,36 @@
 <Page>
 	<PageHeader>History</PageHeader>
 
-	{#if $records.isFetching && !$records.isFetched}
+	<!-- {#if $records.isFetching && !$records.isFetched}
 		<div class="mt-20 flex justify-center">
 			<Loader />
 		</div>
 	{:else}
-		<div class="mx-auto mb-24 flex w-full max-w-lg flex-col py-3">
-			{#each recordByDates as { date, records } (date)}
-				<h2 class="col-span-2 my-3 px-3 text-lg text-gray-400 first:mt-0" transition:fade>
-					{DateTime.fromJSDate(new Date(date)).toFormat('ccc, d LLL y')}
-				</h2>
-				{#each records as record, index (record.id)}
-					<HistoryRecord {record} on:delete={onDeleteRecord} />
-				{/each}
+		
+	{/if} -->
+
+	<div class="mx-auto mb-24 flex w-full max-w-lg flex-col py-3">
+		{#each recordByDates as { date, records } (date)}
+			<h2 class="col-span-2 my-3 px-3 text-lg text-gray-400 first:mt-0" transition:fade>
+				{DateTime.fromJSDate(new Date(date)).toFormat('ccc, d LLL y')}
+			</h2>
+			{#each records as record, index (record.id)}
+				<HistoryRecord {record} on:delete={onDeleteRecord} />
 			{/each}
+		{/each}
 
-			{#if $records.isFetchingNextPage}
-				<div class="flex justify-center">
-					<Loader />
-				</div>
-			{:else if $records.hasNextPage}
-				<div use:visible on:visible={$records.fetchNextPage} />
-			{/if}
+		{#if $records.isFetchingNextPage}
+			<div class="flex justify-center">
+				<Loader />
+			</div>
+		{:else if $records.hasNextPage}
+			<div use:visible on:visible={$records.fetchNextPage} />
+		{/if}
 
-			{#if $records.isFetched && !$records.hasNextPage}
-				<div class="mt-3 text-center text-gray-400">End of history</div>
-			{/if}
-		</div>
-	{/if}
+		{#if $records.isFetched && !$records.hasNextPage}
+			<div class="mt-3 text-center text-gray-400">End of history</div>
+		{/if}
+	</div>
 </Page>
 
 <!-- NAVIGATION TO HOME-->
