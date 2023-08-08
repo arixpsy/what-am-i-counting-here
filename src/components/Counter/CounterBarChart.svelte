@@ -47,7 +47,7 @@
 		selectIndex: number
 	}>()
 
-	$: if (selectedIndex && bars && hasMounted) {
+	$: if (selectedIndex > -1 && bars && hasMounted) {
 		render()
 	}
 
