@@ -6,7 +6,7 @@
 
 	$: labelToRecordMap = convertCounterRecordsToLabelMap(records)
 	$: labelToSizeEntries = Object.entries(Object.fromEntries(labelToRecordMap)).map(
-		([cat, records]) => [cat, records.length] as [string, number]
+		([cat, records]) => [cat, records.reduce((a, r) => a + r.increment, 0)] as [string, number]
 	)
 
 	function convertCounterRecordsToLabelMap(
