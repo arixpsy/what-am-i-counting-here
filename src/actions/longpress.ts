@@ -8,7 +8,6 @@ type LongpressParameters = {
 type LongpressAttributes = {
 	'on:longpressStart'?: () => void
 	'on:longpressEnd'?: () => void
-	'on:beforeLongpressMouseUp'?: () => void // Treat as on:click
 	'on:longpressMouseUp'?: () => void
 }
 
@@ -27,7 +26,6 @@ export function longpress(
 
 		const handleCancelDuringDelay = () => {
 			clearTimeout(timeout)
-			node.dispatchEvent(new CustomEvent('beforeLongpressMouseUp'))
 			node.removeEventListener('mouseup', handleCancelDuringDelay)
 			node.removeEventListener('touchend', handleCancelDuringDelay)
 		}
@@ -46,7 +44,7 @@ export function longpress(
 		const handleCancel = () => {
 			clearTimeout(timeout)
 			node.dispatchEvent(new CustomEvent('longpressMouseUp'))
-			node.removeEventListener('mousemove', handleCancel)
+			node.removeEventListener('mouseout', handleCancel)
 			node.removeEventListener('mouseup', handleCancel)
 			node.removeEventListener('touchend', handleCancel)
 		}

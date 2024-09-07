@@ -21,12 +21,15 @@
 	export let counter: Counter
 	export let currentCount: number
 	export let isSortMode: boolean = false
-	export let isLongpress: boolean = false
+
+	let isLongpress: boolean = false
+	let isLongpressCooldown = false
 
 	$: counterTypeLabel = getCounterTypeLabel(counter)
 	$: if (isLongpress) pressedProgess.set(100)
 	$: if (!isLongpress) pressedProgess.set(0)
-
+	$: if (isLongpressCooldown) setTimeout(() => (isLongpressCooldown = false), 100)
+	
 	const TILE_HOLD_DURATION = 750
 	const dispatch = createEventDispatcher<{
 		'custom-increment': number
@@ -103,9 +106,12 @@
 		threshold: TILE_HOLD_DURATION,
 		delay: 200,
 	}}
-	on:beforeLongpressMouseUp={isSortMode ? undefined : handleClickCounter}
 	on:longpressStart={() => (isLongpress = true)}
-	on:longpressMouseUp={() => (isLongpress = false)}
+	on:longpressMouseUp={() => {
+		isLongpress = false
+		isLongpressCooldown = true
+	}}
+	on:click={isSortMode || isLongpressCooldown ? undefined : handleClickCounter}
 	on:longpressEnd={handleNavigateToCounter}
 >
 	<!-- Delete Button -->
