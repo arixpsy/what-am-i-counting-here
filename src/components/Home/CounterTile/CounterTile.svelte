@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
+	import { linear } from 'svelte/easing'
+	import { tweened } from 'svelte/motion'
 	import { scale } from 'svelte/transition'
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import type { Counter, Record } from '@prisma/client'
@@ -19,9 +21,13 @@
 	export let counter: Counter
 	export let currentCount: number
 	export let isSortMode: boolean = false
+	export let isLongpress: boolean = false
 
 	$: counterTypeLabel = getCounterTypeLabel(counter)
+	$: if (isLongpress) pressedProgess.set(100)
+	$: if (!isLongpress) pressedProgess.set(0)
 
+	const TILE_HOLD_DURATION = 750
 	const dispatch = createEventDispatcher<{
 		'custom-increment': number
 	}>()
@@ -31,6 +37,10 @@
 	})
 	const createRecord = createMutation(callCreateRecord, {
 		onSuccess: createRecordSuccessCB,
+	})
+	const pressedProgess = tweened(0, {
+		duration: TILE_HOLD_DURATION,
+		easing: linear,
 	})
 
 	function handleKeyPress(e: KeyboardEvent) {
@@ -87,10 +97,16 @@
 	class:cursor-grab={isSortMode}
 	style="background-color: {counter.color}"
 	tabIndex={isSortMode ? -1 : 0}
-	on:click={isSortMode ? undefined : handleClickCounter}
 	on:keyup={isSortMode ? undefined : handleKeyPress}
-	use:longpress={{ enabled: !isSortMode }}
-	on:longpress={handleNavigateToCounter}
+	use:longpress={{
+		enabled: !isSortMode,
+		threshold: TILE_HOLD_DURATION,
+		delay: 200,
+	}}
+	on:beforeLongpressMouseUp={isSortMode ? undefined : handleClickCounter}
+	on:longpressStart={() => (isLongpress = true)}
+	on:longpressMouseUp={() => (isLongpress = false)}
+	on:longpressEnd={handleNavigateToCounter}
 >
 	<!-- Delete Button -->
 	{#if isSortMode}
@@ -104,19 +120,29 @@
 		</div>
 	{/if}
 
+	<!-- Longpress animation -->
+	<div
+		class="pointer-events-none absolute inset-1 z-0 grid rounded-lg p-1"
+		style="background:repeating-conic-gradient(from -43deg, white 0%, white {$pressedProgess}%, transparent {$pressedProgess}%, transparent 100%)"
+	>
+		<div class="rounded-md" style="background-color: {counter.color}" />
+	</div>
+
 	<!-- Counter Labels -->
-	<p class="text-md w-full truncate text-center text-gray-100">
-		{counter.title}
-	</p>
-	<p class="w-full text-center text-xs">{counterTypeLabel}</p>
-	{#key currentCount}
-		<p
-			class="my-3 w-full overflow-x-hidden overflow-y-clip text-center text-3xl font-bold"
-			in:scale|local
-		>
-			{formatCount(currentCount)}
+	<div class="z-10 flex flex-col items-center justify-center">
+		<p class="text-md w-full truncate text-center text-gray-100">
+			{counter.title}
 		</p>
-	{/key}
+		<p class="w-full text-center text-xs">{counterTypeLabel}</p>
+		{#key currentCount}
+			<p
+				class="my-3 w-full overflow-x-hidden overflow-y-clip text-center text-3xl font-bold"
+				in:scale|local
+			>
+				{formatCount(currentCount)}
+			</p>
+		{/key}
+	</div>
 </div>
 
 <style>
